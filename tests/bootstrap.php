@@ -37,6 +37,38 @@ if (!function_exists('is_array')) {
     // built-in; never actually missing — here for documentation only
 }
 
+// ── WordPress DB stub (for PHPUnit mock generation) ──────────────────────────
+
+if (!class_exists('wpdb')) {
+    class wpdb
+    {
+        public string $prefix    = 'wp_';
+        public int    $insert_id = 0;
+
+        public function get_charset_collate(): string { return ''; }
+        public function prepare(string $query, mixed ...$args): string { return $query; }
+        public function get_results(string $query, string $output = 'OBJECT'): array { return []; }
+        public function get_row(string $query, string $output = 'OBJECT'): mixed { return null; }
+        public function get_var(string $query): mixed { return null; }
+        public function insert(string $table, array $data): int|false { return 1; }
+        public function update(string $table, array $data, array $where): int|false { return 1; }
+        public function delete(string $table, array $where): int|false { return 1; }
+        public function query(string $query): int|bool { return true; }
+    }
+}
+
+// ── WordPress option / transient stubs ────────────────────────────────────────
+
+if (!function_exists('get_option')) {
+    function get_option(string $key, mixed $default = false): mixed { return $default; }
+}
+if (!function_exists('update_option')) {
+    function update_option(string $key, mixed $value): bool { return true; }
+}
+if (!function_exists('delete_option')) {
+    function delete_option(string $key): bool { return true; }
+}
+
 // ── Minimal WooCommerce class stubs ───────────────────────────────────────────
 
 if (!class_exists('WC_Order')) {

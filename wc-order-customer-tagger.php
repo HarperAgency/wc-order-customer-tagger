@@ -44,6 +44,10 @@ if (file_exists(WC_TAGGER_DIR . 'vendor/autoload.php')) {
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 
+register_activation_hook(__FILE__, function (): void {
+    HarperAgency\WCTagger\Db\Schema::install();
+});
+
 add_action('plugins_loaded', function (): void {
     if (!wc_tagger_wc_active()) {
         add_action('admin_notices', function (): void {
@@ -55,6 +59,12 @@ add_action('plugins_loaded', function (): void {
     }
 
     load_plugin_textdomain('wc-order-customer-tagger', false, dirname(plugin_basename(__FILE__)) . '/languages');
+
+    HarperAgency\WCTagger\Db\Schema::maybeUpgrade();
+
+    $repo      = new HarperAgency\WCTagger\Db\TagRepository();
+    $tagsAdmin = new HarperAgency\WCTagger\Admin\TagsAdmin($repo);
+    $tagsAdmin->register();
 });
 
 // ── HPOS compatibility declaration ───────────────────────────────────────────

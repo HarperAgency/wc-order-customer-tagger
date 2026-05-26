@@ -1,0 +1,40 @@
+/* Harper Tagger — admin styles */
+
+.harper-tagger-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.6;
+    text-shadow: 0 1px 1px rgba(0,0,0,.2);
+    white-space: nowrap;
+}
+
+.harper-tagger-icon-preview {
+    max-width: 24px;
+    max-height: 24px;
+    vertical-align: middle;
+}
+
+.harper-tagger-icon-preview-wrap {
+    margin-top: 6px;
+}
+
+.harper-tagger-list .column-badge {
+    width: 120px;
+}
+
+.harper-tagger-delete-link {
+    color: #b32d2e;
+}
+.harper-tagger-delete-link:hover {
+    color: #dc3232;
+}
+
+/* Live badge preview on edit page */
+#harper-badge-preview {
+    font-size: 13px;
+    padding: 3px 10px;
+}
