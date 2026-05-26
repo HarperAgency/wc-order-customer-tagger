@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace HarperAgency\WCTagger\Tests\Unit\RuleEngine;
 
-use HarperAgency\WCTagger\RuleEngine\Condition;
-use HarperAgency\WCTagger\RuleEngine\Engine;
-use HarperAgency\WCTagger\RuleEngine\Rule;
+use HarperAgency\RuleEngine\Condition;
+use HarperAgency\RuleEngine\Engine;
+use HarperAgency\RuleEngine\Rule;
 use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertSame;
 

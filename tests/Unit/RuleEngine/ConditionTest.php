@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace HarperAgency\WCTagger\Tests\Unit\RuleEngine;
 
-use HarperAgency\WCTagger\RuleEngine\Condition;
+use HarperAgency\RuleEngine\Condition;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use function PHPUnit\Framework\assertSame;
