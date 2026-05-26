@@ -42,7 +42,7 @@ class Seeder
                 $wpdb->insert($rules, [
                     'tag_id'     => $tagId,
                     'label'      => $rule['label'],
-                    'trigger'    => $rule['trigger'],
+                    'rule_trigger' => $rule['trigger'],
                     'operator'   => $rule['operator'],
                     'conditions' => json_encode($rule['conditions']),
                     'priority'   => $rule['priority'],

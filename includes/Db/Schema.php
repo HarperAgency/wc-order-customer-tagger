@@ -20,7 +20,7 @@ class Schema
         $p = $wpdb->prefix;
 
         $sql = "
-        CREATE TABLE IF NOT EXISTS {$p}harper_tagger_tags (
+        CREATE TABLE {$p}harper_tagger_tags (
             id         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             name       VARCHAR(100)        NOT NULL,
             slug       VARCHAR(100)        NOT NULL,
@@ -32,11 +32,11 @@ class Schema
             UNIQUE KEY slug (slug)
         ) {$c};
 
-        CREATE TABLE IF NOT EXISTS {$p}harper_tagger_rules (
+        CREATE TABLE {$p}harper_tagger_rules (
             id         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             tag_id     BIGINT(20) UNSIGNED NOT NULL,
             label      VARCHAR(100)        NOT NULL DEFAULT '',
-            trigger    VARCHAR(30)         NOT NULL DEFAULT 'order_placed',
+            rule_trigger VARCHAR(30)       NOT NULL DEFAULT 'order_placed',
             operator   VARCHAR(3)          NOT NULL DEFAULT 'AND',
             conditions LONGTEXT            NOT NULL,
             priority   SMALLINT UNSIGNED   NOT NULL DEFAULT 10,
@@ -44,10 +44,10 @@ class Schema
             created_at DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
             KEY tag_id            (tag_id),
-            KEY is_active_trigger (is_active, trigger)
+            KEY is_active_trigger (is_active, rule_trigger)
         ) {$c};
 
-        CREATE TABLE IF NOT EXISTS {$p}harper_tagger_order_tags (
+        CREATE TABLE {$p}harper_tagger_order_tags (
             id         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             order_id   BIGINT(20) UNSIGNED NOT NULL,
             tag_id     BIGINT(20) UNSIGNED NOT NULL,
@@ -58,7 +58,7 @@ class Schema
             KEY tag_id (tag_id)
         ) {$c};
 
-        CREATE TABLE IF NOT EXISTS {$p}harper_tagger_customer_tags (
+        CREATE TABLE {$p}harper_tagger_customer_tags (
             id          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             customer_id BIGINT(20) UNSIGNED NOT NULL,
             tag_id      BIGINT(20) UNSIGNED NOT NULL,
