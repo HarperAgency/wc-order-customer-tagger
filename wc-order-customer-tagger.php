@@ -46,6 +46,7 @@ if (file_exists(WC_TAGGER_DIR . 'vendor/autoload.php')) {
 
 register_activation_hook(__FILE__, function (): void {
     HarperAgency\WCTagger\Db\Schema::install();
+    HarperAgency\WCTagger\Db\Seeder::maybeRun();
 });
 
 add_action('plugins_loaded', function (): void {

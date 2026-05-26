@@ -389,6 +389,172 @@ class ConditionTest extends TestCase
         assertSame(false, $condition->evaluate($context));
     }
 
+    // ── neq operator (numeric + string + country) ────────────────────────────
+
+    public function testNeqNumericPasses(): void
+    {
+        assertSame(true,  (new Condition('order_total', 'neq', 100.0))->evaluate(['order_total' => 99.0]));
+        assertSame(false, (new Condition('order_total', 'neq', 100.0))->evaluate(['order_total' => 100.0]));
+    }
+
+    public function testNeqStringPasses(): void
+    {
+        assertSame(true,  (new Condition('payment_method', 'neq', 'cod'))->evaluate(['payment_method' => 'stripe']));
+        assertSame(false, (new Condition('payment_method', 'neq', 'cod'))->evaluate(['payment_method' => 'cod']));
+    }
+
+    public function testNeqCountryPasses(): void
+    {
+        assertSame(true,  (new Condition('billing_country', 'neq', 'US'))->evaluate(['billing_country' => 'CA']));
+        assertSame(false, (new Condition('billing_country', 'neq', 'US'))->evaluate(['billing_country' => 'US']));
+    }
+
+    // ── starts_with operator ─────────────────────────────────────────────────
+
+    public function testStartsWithOnShippingMethod(): void
+    {
+        assertSame(true,  (new Condition('shipping_method', 'starts_with', 'flat_rate'))->evaluate(['shipping_method' => 'flat_rate:3']));
+        assertSame(false, (new Condition('shipping_method', 'starts_with', 'flat_rate'))->evaluate(['shipping_method' => 'free_shipping:1']));
+    }
+
+    public function testStartsWithOnContainsSku(): void
+    {
+        $items = [['sku' => 'IMP-001', 'categories' => []], ['sku' => 'WIDGET', 'categories' => []]];
+        assertSame(true,  (new Condition('contains_sku', 'starts_with', 'IMP-'))->evaluate(['items' => $items]));
+        assertSame(false, (new Condition('contains_sku', 'starts_with', 'FRAG-'))->evaluate(['items' => $items]));
+        assertSame(false, (new Condition('contains_sku', 'starts_with', 'IMP-'))->evaluate(['items' => []]));
+    }
+
+    // ── payment_status ───────────────────────────────────────────────────────
+
+    #[DataProvider('paymentStatusProvider')]
+    public function testPaymentStatus(string $op, mixed $value, string $status, bool $expected): void
+    {
+        assertSame($expected, (new Condition('payment_status', $op, $value))->evaluate(['payment_status' => $status]));
+    }
+
+    public static function paymentStatusProvider(): array
+    {
+        return [
+            'eq pending passes'                    => ['eq',     'pending',            'pending',    true],
+            'eq pending fails on processing'       => ['eq',     'pending',            'processing', false],
+            'in pending+on-hold passes pending'    => ['in',     ['pending', 'on-hold'], 'pending',  true],
+            'in pending+on-hold passes on-hold'    => ['in',     ['pending', 'on-hold'], 'on-hold',  true],
+            'in pending+on-hold fails processing'  => ['in',     ['pending', 'on-hold'], 'processing', false],
+            'not_in passes processing'             => ['not_in', ['pending', 'on-hold'], 'processing', true],
+            'not_in fails pending'                 => ['not_in', ['pending', 'on-hold'], 'pending',  false],
+            'neq pending passes processing'        => ['neq',    'pending',            'processing', true],
+            'neq pending fails pending'            => ['neq',    'pending',            'pending',    false],
+        ];
+    }
+
+    // ── Boolean fields (is_guest, is_first_order, has_coupon, address_mismatch)
+
+    #[DataProvider('booleanFieldProvider')]
+    public function testBooleanFields(string $field, string $op, bool $contextValue, bool $expected): void
+    {
+        assertSame($expected, (new Condition($field, $op, true))->evaluate([$field => $contextValue]));
+    }
+
+    public static function booleanFieldProvider(): array
+    {
+        $fields = ['is_guest', 'is_first_order', 'has_coupon', 'address_mismatch'];
+        $cases  = [];
+        foreach ($fields as $f) {
+            $cases["{$f} is_true when true"]  = [$f, 'is_true',  true,  true];
+            $cases["{$f} is_true when false"] = [$f, 'is_true',  false, false];
+            $cases["{$f} is_false when false"]= [$f, 'is_false', false, true]; // note: value param ignored for is_false
+            $cases["{$f} is_false when true"] = [$f, 'is_false', true,  false];
+        }
+        return $cases;
+    }
+
+    public function testBooleanFieldMissingContextDefaultsFalse(): void
+    {
+        // is_guest missing from context — defaults to false, so is_true fails
+        assertSame(false, (new Condition('is_guest', 'is_true', true))->evaluate([]));
+        // is_false passes because default is false
+        assertSame(true,  (new Condition('is_guest', 'is_false', true))->evaluate([]));
+    }
+
+    public function testBooleanFieldInvalidOperatorReturnsFalse(): void
+    {
+        assertSame(false, (new Condition('is_guest', 'eq', true))->evaluate(['is_guest' => true]));
+    }
+
+    // ── customer_account_age_days + days_since_last_order ────────────────────
+
+    public function testCustomerAccountAgeDays(): void
+    {
+        assertSame(true,  (new Condition('customer_account_age_days', 'lt',  30))->evaluate(['customer_account_age_days' => 10]));
+        assertSame(false, (new Condition('customer_account_age_days', 'lt',  30))->evaluate(['customer_account_age_days' => 45]));
+        assertSame(true,  (new Condition('customer_account_age_days', 'gte', 30))->evaluate(['customer_account_age_days' => 30]));
+    }
+
+    public function testDaysSinceLastOrder(): void
+    {
+        assertSame(true,  (new Condition('days_since_last_order', 'gt',  90))->evaluate(['days_since_last_order' => 120]));
+        assertSame(false, (new Condition('days_since_last_order', 'gt',  90))->evaluate(['days_since_last_order' => 60]));
+        assertSame(true,  (new Condition('days_since_last_order', 'lte', 30))->evaluate(['days_since_last_order' => 30]));
+    }
+
+    // ── Seed rule smoke tests (all 14 default rules evaluated) ───────────────
+
+    public function testHighValueSeedRule(): void
+    {
+        $c = new Condition('order_total', 'gt', 500);
+        assertSame(true,  $c->evaluate(['order_total' => 750.0]));
+        assertSame(false, $c->evaluate(['order_total' => 499.99]));
+    }
+
+    public function testUnconfirmedPaymentSeedRule(): void
+    {
+        $c = new Condition('payment_status', 'in', ['pending', 'on-hold']);
+        assertSame(true,  $c->evaluate(['payment_status' => 'pending']));
+        assertSame(true,  $c->evaluate(['payment_status' => 'on-hold']));
+        assertSame(false, $c->evaluate(['payment_status' => 'processing']));
+        assertSame(false, $c->evaluate(['payment_status' => 'completed']));
+    }
+
+    public function testAddressMismatchSeedRule(): void
+    {
+        $c = new Condition('address_mismatch', 'is_true', true);
+        assertSame(true,  $c->evaluate(['address_mismatch' => true]));
+        assertSame(false, $c->evaluate(['address_mismatch' => false]));
+    }
+
+    public function testGuestCheckoutSeedRule(): void
+    {
+        $c = new Condition('is_guest', 'is_true', true);
+        assertSame(true,  $c->evaluate(['is_guest' => true]));
+        assertSame(false, $c->evaluate(['is_guest' => false]));
+    }
+
+    public function testFirstOrderSeedRule(): void
+    {
+        $c = new Condition('is_first_order', 'is_true', true);
+        assertSame(true,  $c->evaluate(['is_first_order' => true]));
+        assertSame(false, $c->evaluate(['is_first_order' => false]));
+    }
+
+    public function testHasCouponSeedRule(): void
+    {
+        $c = new Condition('has_coupon', 'is_true', true);
+        assertSame(true,  $c->evaluate(['has_coupon' => true]));
+        assertSame(false, $c->evaluate(['has_coupon' => false]));
+    }
+
+    public function testAtRiskSeedRule(): void
+    {
+        $days  = new Condition('days_since_last_order',  'gt',  90);
+        $count = new Condition('customer_order_count',   'gte', 2);
+        $ctx   = ['days_since_last_order' => 120, 'customer_order_count' => 3];
+        assertSame(true,  $days->evaluate($ctx) && $count->evaluate($ctx));
+
+        $ctx2  = ['days_since_last_order' => 60, 'customer_order_count' => 3];
+        assertSame(false, $days->evaluate($ctx2) && $count->evaluate($ctx2));
+    }
+
     // ── Accessor methods ──────────────────────────────────────────────────────
 
     public function testAccessors(): void
