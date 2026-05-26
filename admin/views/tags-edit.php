@@ -92,7 +92,6 @@ $tagId = $isNew ? 0 : (int) $tag['id'];
             </tr>
         </table>
 
-        <?php if (!$isNew): ?>
         <hr>
         <h3><?php esc_html_e('Preview', 'wc-order-customer-tagger'); ?></h3>
         <p>
@@ -101,11 +100,10 @@ $tagId = $isNew ? 0 : (int) $tag['id'];
             <?php else: ?>
                 <span class="harper-tagger-badge" id="harper-badge-preview"
                       style="background:<?php echo esc_attr($val['color']); ?>">
-                    <?php echo esc_html($val['name']); ?>
+                    <?php echo esc_html($val['name'] ?: __('Preview', 'wc-order-customer-tagger')); ?>
                 </span>
             <?php endif; ?>
         </p>
-        <?php endif; ?>
 
         <?php submit_button($isNew ? __('Create Tag', 'wc-order-customer-tagger') : __('Update Tag', 'wc-order-customer-tagger')); ?>
     </form>
