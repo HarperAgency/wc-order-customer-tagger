@@ -26,6 +26,18 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 if (!function_exists('__')) {
     function __(string $text, string $domain = 'default'): string { return $text; }
 }
+if (!function_exists('esc_html')) {
+    function esc_html(string $text): string { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
+}
+if (!function_exists('esc_attr')) {
+    function esc_attr(string $text): string { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
+}
+if (!function_exists('esc_url')) {
+    function esc_url(string $url): string { return htmlspecialchars($url, ENT_QUOTES, 'UTF-8'); }
+}
+if (!function_exists('esc_html_e')) {
+    function esc_html_e(string $text, string $domain = 'default'): void { echo htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
+}
 if (!function_exists('add_action')) {
     function add_action(string $hook, mixed $callback, int $priority = 10, int $args = 1): void {}
 }
@@ -64,6 +76,36 @@ if (!class_exists('wpdb')) {
 
 // ── WordPress option / transient stubs ────────────────────────────────────────
 
+if (!function_exists('wp_create_nonce')) {
+    function wp_create_nonce(string $action): string { return 'test_nonce'; }
+}
+if (!function_exists('check_ajax_referer')) {
+    function check_ajax_referer(string $action, mixed $queryArg = false, bool $die = true): int { return 1; }
+}
+if (!function_exists('current_user_can')) {
+    function current_user_can(string $cap): bool { return true; }
+}
+if (!function_exists('wp_send_json_success')) {
+    function wp_send_json_success(mixed $data = null, int $statusCode = 200): void {}
+}
+if (!function_exists('wp_send_json_error')) {
+    function wp_send_json_error(mixed $data = null, int $statusCode = 200): void {}
+}
+if (!function_exists('admin_url')) {
+    function admin_url(string $path = ''): string { return 'http://example.com/wp-admin/' . $path; }
+}
+if (!function_exists('wp_enqueue_script')) {
+    function wp_enqueue_script(string $handle, string $src = '', array $deps = [], mixed $ver = false, bool $inFooter = false): void {}
+}
+if (!function_exists('wp_enqueue_style')) {
+    function wp_enqueue_style(string $handle, string $src = '', array $deps = [], mixed $ver = false, string $media = 'all'): void {}
+}
+if (!function_exists('wp_localize_script')) {
+    function wp_localize_script(string $handle, string $name, array $data): bool { return true; }
+}
+if (!function_exists('esc_attr__')) {
+    function esc_attr__(string $text, string $domain = 'default'): string { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
+}
 if (!function_exists('get_option')) {
     function get_option(string $key, mixed $default = false): mixed { return $default; }
 }

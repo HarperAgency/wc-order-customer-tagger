@@ -126,3 +126,171 @@
 .harper-tagger-profile-section .harper-tagger-metabox-tags {
     margin-top: 6px;
 }
+
+/* ── List table columns (orders + customers) ───────────────────────────── */
+
+.harper-tagger-column-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    align-items: center;
+}
+
+/* Keep the Tags column from getting too wide in the grid */
+.column-harper_tags,
+.column-harper_customer_tags {
+    width: 160px;
+}
+
+.harper-tagger-column-tags .harper-tagger-badge {
+    font-size: 10px;
+    padding: 1px 6px;
+}
+
+/* ── Clickable cell wrapper ────────────────────────────────────────────── */
+
+.harper-tagger-cell {
+    cursor: pointer;
+    display: inline-block;
+    min-width: 24px;
+    min-height: 20px;
+    border-radius: 3px;
+    padding: 2px 4px;
+    transition: background 0.15s;
+}
+
+.harper-tagger-cell:hover {
+    background: #f0f0f1;
+    outline: 1px dashed #c3c4c7;
+}
+
+/* ── Popover container ─────────────────────────────────────────────────── */
+
+#harper-tag-popover {
+    display: none;
+    position: absolute;
+    z-index: 99999;
+    width: 300px;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.15);
+    font-size: 13px;
+}
+
+.htp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px 8px;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.htp-title {
+    font-weight: 600;
+    color: #1d2327;
+    font-size: 12px;
+}
+
+.htp-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    color: #787c82;
+    padding: 0 2px;
+}
+
+.htp-close:hover {
+    color: #1d2327;
+}
+
+.htp-section {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.htp-section:last-of-type {
+    border-bottom: none;
+}
+
+.htp-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #787c82;
+    margin-bottom: 6px;
+}
+
+.htp-applied,
+.htp-available {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    min-height: 24px;
+    align-items: center;
+}
+
+.htp-empty {
+    color: #787c82;
+    font-style: italic;
+    font-size: 12px;
+}
+
+/* Applied tag: badge + × button side by side */
+.htp-applied-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.htp-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    color: #787c82;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+.htp-remove:hover {
+    color: #b32d2e;
+    background: #fce8e8;
+}
+
+.htp-add-badge {
+    opacity: 0.85;
+    transition: opacity 0.1s, transform 0.1s;
+}
+
+.htp-add-badge:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.htp-icon {
+    max-width: 22px;
+    max-height: 22px;
+    vertical-align: middle;
+    border-radius: 2px;
+}
+
+/* Status / error bar */
+.htp-status {
+    display: none;
+    padding: 6px 12px;
+    font-size: 11px;
+    color: #646970;
+    border-top: 1px solid #f0f0f1;
+    background: #f9f9f9;
+    border-radius: 0 0 4px 4px;
+}
+
+.htp-status-error {
+    color: #b32d2e;
+    background: #fce8e8;
+}

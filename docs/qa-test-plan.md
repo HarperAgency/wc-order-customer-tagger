@@ -1,4 +1,4 @@
-# Harper Order & Customer Tagger — QA Test Plan v1.0
+# Harper Order & Customer Tagger — QA Test Plan v1.3
 
 ## Before You Start
 
@@ -154,7 +154,64 @@ Click **Edit** on any existing tag.
 
 ---
 
-## Section 7 — Cross-Browser Visual Checks
+## Section 7 — Orders List Grid (Tags Column)
+
+> WooCommerce → Orders. Verify the Tags column appears and displays correctly.
+
+| # | Test | Chrome | Firefox | Edge |
+|---|------|--------|---------|------|
+| 7.1 | Tags column appears in the orders list between Status and other columns | | | |
+| 7.2 | Order with one tag: badge pill shows correct tag name and colour | | | |
+| 7.3 | Order with multiple tags: all badges visible, no overflow or truncation | | | |
+| 7.4 | Order with an icon tag: image displays at correct size (24×24), not oversized | | | |
+| 7.5 | Order with no tags: shows a dash (—), not blank or error | | | |
+| 7.6 | Column is visible in both HPOS mode and legacy post-based orders | | | |
+| 7.7 | Column width does not cause other columns to overflow the table | | | |
+
+---
+
+## Section 8 — Customers List Grid (Tags Column)
+
+> WordPress Admin → Users. Verify the Tags column appears and displays correctly.
+
+| # | Test | Chrome | Firefox | Edge |
+|---|------|--------|---------|------|
+| 8.1 | Tags column appears in the users/customers list | | | |
+| 8.2 | Customer with one tag: badge pill shows correct tag name and colour | | | |
+| 8.3 | Customer with multiple tags: all badges visible | | | |
+| 8.4 | Customer with an icon tag: image displays correctly | | | |
+| 8.5 | Customer with no tags: shows a dash (—) | | | |
+| 8.6 | Tags are correct after a new order fires and tags the customer | | | |
+
+---
+
+## Section 9 — Order Detail Screen (Tags Meta Box)
+
+> WooCommerce → Orders → click any order. Verify the Tags meta box on the right sidebar.
+
+| # | Test | Chrome | Firefox | Edge |
+|---|------|--------|---------|------|
+| 9.1 | "Order Tags" meta box appears in the right sidebar | | | |
+| 9.2 | Badge pills show correct name and colour for each applied tag | | | |
+| 9.3 | Icon tags display the image, not a badge pill | | | |
+| 9.4 | "No tags applied." shown when order has no tags | | | |
+
+---
+
+## Section 10 — Customer Profile Screen (Tags Section)
+
+> WordPress Admin → Users → click any customer. Verify the Tags section.
+
+| # | Test | Chrome | Firefox | Edge |
+|---|------|--------|---------|------|
+| 10.1 | "Customer Tags" section appears on the user profile page | | | |
+| 10.2 | Badge pills show correct name and colour | | | |
+| 10.3 | Icon tags display the image | | | |
+| 10.4 | "No customer tags applied." shown when customer has no tags | | | |
+
+---
+
+## Section 11 — Cross-Browser Visual Checks
 
 Run these with a real logged-in browser session, not CLI.
 
@@ -171,7 +228,7 @@ Run these with a real logged-in browser session, not CLI.
 
 ---
 
-## Section 8 — Automated Test Suite (Run Once, Any Browser)
+## Section 12 — Automated Test Suite (Run Once, Any Browser)
 
 These are already automated. QA should verify the suite passes clean on the test environment — this confirms no regressions were introduced since the last dev commit.
 
@@ -188,24 +245,18 @@ Expected output (last two lines):
 
 | # | Check | Result |
 |---|-------|--------|
-| 8.1 | CI script exits 0 | |
-| 8.2 | Rule engine: 14 passed, 0 failed | |
-| 8.3 | Playwright UI: 11 passed, 0 failed | |
+| 12.1 | CI script exits 0 | |
+| 12.2 | All 234 unit tests pass, 0 failed | |
+| 12.3 | Playwright UI: 11 passed, 0 failed | |
 
 ---
 
-## Section 9 — Out of Scope for v1.0.0
-
-The following are **not yet built** and should not be tested. They will have their own QA plan when complete.
+## Section 13 — Out of Scope / Future
 
 | Item | Status |
 |------|--------|
-| Automatic tag application at checkout (order hook wiring) | Pending |
-| Rule builder admin UI (add/edit rules via WP admin) | Pending |
-| Tag badges on WC order detail screen | Pending |
-| Tag badges on WC customer profile screen | Pending |
-| OpenMage (Magento 1) port | Not started |
-| Shopify port | Not started |
+| OpenMage (Magento 1) port | Separate repo |
+| Shopify port | Hosted app, not self-install |
 
 ---
 
@@ -219,5 +270,9 @@ The following are **not yet built** and should not be tested. They will have the
 | 4 — Edit tag | | | | | | |
 | 5 — Order rules | | | | | | |
 | 6 — Customer rules | | | | | | |
-| 7 — Visual / cross-browser | | | | | | |
-| 8 — Automated suite | | | N/A | N/A | N/A | |
+| 7 — Orders list column | | | | | | |
+| 8 — Customers list column | | | | | | |
+| 9 — Order detail meta box | | | | | | |
+| 10 — Customer profile section | | | | | | |
+| 11 — Visual / cross-browser | | | | | | |
+| 12 — Automated suite | | | N/A | N/A | N/A | |

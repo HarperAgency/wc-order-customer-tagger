@@ -8,8 +8,8 @@
  * Requires PHP:      8.1
  * Author:            Harper Agency
  * Author URI:        https://harper.agency
- * License:           GPL-2.0-or-later
- * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * License:           MIT
+ * License URI:       https://opensource.org/licenses/MIT
  * Text Domain:       wc-order-customer-tagger
  * Domain Path:       /languages
  * WC requires at least: 7.0
@@ -71,8 +71,17 @@ add_action('plugins_loaded', function (): void {
     $orderMeta = new HarperAgency\WCTagger\Admin\OrderTagsMetaBox();
     $orderMeta->register();
 
+    $orderColumn = new HarperAgency\WCTagger\Admin\OrderTagsColumn();
+    $orderColumn->register();
+
     $customerProfile = new HarperAgency\WCTagger\Admin\CustomerTagsProfile();
     $customerProfile->register();
+
+    $customerColumn = new HarperAgency\WCTagger\Admin\CustomerTagsColumn();
+    $customerColumn->register();
+
+    $popover = new HarperAgency\WCTagger\Admin\TagPopover();
+    $popover->register();
 
     // ── Rule engine hooks ─────────────────────────────────────────────────────
     $tagger = new HarperAgency\WCTagger\RuleEngine\Tagger();
