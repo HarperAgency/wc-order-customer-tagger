@@ -85,18 +85,20 @@
             ctx = { type: type, id: id, $cell: $cell };
 
             if (allTags === null) {
-                setStatus(i18n.saving || 'Loading…');
-                showPopover($cell);
                 $.post(ajaxUrl, { action: 'harper_tagger_get_all_tags', nonce: nonce })
                     .done(function (resp) {
-                        if (resp.success) {
-                            allTags = resp.data.tags;
-                            renderPopover();
-                        }
+                        // Always set allTags (even empty) so subsequent opens skip AJAX
+                        allTags = (resp.success && resp.data && resp.data.tags)
+                            ? resp.data.tags
+                            : [];
+                        renderPopover();
+                    })
+                    .fail(function () {
+                        allTags = [];
+                        renderPopover();
                     });
             } else {
                 renderPopover();
-                showPopover($cell);
             }
         });
     }

@@ -141,8 +141,15 @@ class GridFilters
 
     // ── Customers filter ──────────────────────────────────────────────────────
 
-    public function renderCustomerFilter(): void
+    /**
+     * @param string $which  'top' or 'bottom' — WP 5.9+ passes this arg.
+     *                       Only render at the top to avoid duplicate IDs.
+     */
+    public function renderCustomerFilter(string $which = 'top'): void
     {
+        if ($which !== 'top') {
+            return;
+        }
         // users.php is not restricted to a post type — render unconditionally.
         // Non-customer users simply won't appear in the tag table, so the filter
         // is harmless on a store with mixed user roles.
