@@ -1,0 +1,103 @@
+Section,#,Test,Steps,Expected Result,Chrome,Firefox,Edge,Tester,Date,Notes
+,,HARPER ORDER & CUSTOMER TAGGER — QA TEST PLAN v1.0,,,,,,,
+,,Plugin v1.0.0 | WooCommerce | Test env: https://harperservice.tech/icon_test/wc,,,,,,,
+,,Admin login: harperadmin / Harper@Test2026! | Report failures to: dev@harper.agency,,,,,,,
+,,Mark each row: PASS / FAIL / SKIP (with reason in Notes),,,,,,,
+,,,,,,,,,
+1 — Installation,,,,,,,,
+1,1.1,Plugin installs without errors,Upload plugin zip via Plugins → Add New → Upload,No error messages. Plugin appears in list.,,,,
+1,1.2,Plugin activates cleanly,Click Activate,No PHP errors. WooCommerce sidebar shows 'Order & Cust. Tags' menu item.,,,,
+1,1.3,Seed tags present on first load,WooCommerce → Order & Cust. Tags,Table shows exactly 14 tags. No error notice.,,,,
+1,1.4,Deactivate + reactivate doesn't duplicate seeds,Deactivate then reactivate from Plugins list,Still 14 tags — no duplicates added.,,,,
+,,,,,,,,,
+2 — Tag List Page,,,,,,,,
+2,2.1,Page loads without errors,Navigate to WooCommerce → Order & Cust. Tags,Page loads. Heading visible. No Fatal error or PHP Warning on page.,,,,
+2,2.2,All 14 seed tags present,Scan the table,"All 14 names visible: High Value, Unconfirmed Payment, Address Mismatch, Guest Checkout, First Order, Has Coupon, Bulk Order, Local Pickup, Free Shipping, International, VIP, Repeat Buyer, At Risk, New Customer",,,,
+2,2.3,Colour badges render,Look at the Badge column,Every row shows a coloured pill badge. No broken images or empty cells.,,,,
+2,2.4,Badge colours are visually distinct,Visually scan badges,Badges use visibly different colours — not all the same.,,,,
+2,2.5,Type column correct,Check the Type column,10 rows show Order. 4 rows show Customer. No blank type cells.,,,,
+2,2.6,Rules column shows counts,Check the Rules column,Each seed tag shows 1. No tag shows 0.,,,,
+2,2.7,Edit link works,Click Edit on any tag,Navigates to edit form for that tag. URL contains action=edit&id=,,,,
+2,2.8,Delete — cancel,Click Delete on any tag then click Cancel in browser dialog,Tag remains in list. No change.,,,,
+2,2.9,Delete — confirm,Create a test tag first. Click Delete → click OK.,Tag removed from list. Green success notice shown.,,,,
+2,2.10,Add Tag button,Click Add Tag at top of page,Navigates to add form. URL contains action=add.,,,,
+,,,,,,,,,
+3 — Add Tag Form,,,,,,,,
+3,3.1,All fields present,Load WooCommerce → Order & Cust. Tags → Add Tag,"Visible: Name, colour picker swatch, Applies To dropdown, Custom Icon URL, Preview badge, Create Tag button",,,,
+3,3.2,Name drives live preview,Type 'My Test Tag' in Name field,Badge preview text updates to 'My Test Tag' as you type — no page reload required.,,,,
+3,3.3,Colour picker opens,Click the colour swatch button,Colour picker panel appears.,,,,
+3,3.4,Colour change drives preview,Select a new colour in the picker,Badge preview background changes to match selected colour.,,,,
+3,3.5,Submit with empty name,Leave Name blank and click Create Tag,Stays on form. Error: Tag name is required. Other field values preserved.,,,,
+3,3.6,Submit name over 100 characters,Paste 101-character string in Name field and submit,Error: Tag name must be 100 characters or fewer.,,,,
+3,3.7,Create valid order tag,Name = QA Order Tag | type = Orders only | submit,Redirects to edit form. Success notice shown.,,,,
+3,3.8,New tag visible in list,Navigate to tag list,QA Order Tag appears with correct colour badge and type Order.,,,,
+3,3.9,Create valid customer tag,Name = QA Customer Tag | type = Customers only | submit,Tag created. List shows type Customer.,,,,
+3,3.10,Custom icon URL — valid image,Enter a valid image URL and submit,Badge column shows the image instead of colour pill.,,,,
+3,3.11,Custom icon URL — left blank,Leave Icon URL empty and submit,Badge column shows colour pill (no broken image icon).,,,,
+3,3.12,Duplicate name allowed,Create a second tag with the same name as an existing one,Tag created with a unique slug (e.g. qa-order-tag-2). No error.,,,,
+,,,,,,,,,
+4 — Edit Tag Form,,,,,,,,
+4,4.1,Form pre-filled with existing values,Click Edit on any tag,"Name, colour, type, image URL fields show existing values.",,,,
+4,4.2,Badge preview shows current state,Load edit form,Preview badge shows current name and colour.,,,,
+4,4.3,Update name,Change name and click Update Tag,Returns to list. Updated name visible.,,,,
+4,4.4,Update colour,Change colour and click Update Tag,List badge reflects new colour.,,,,
+4,4.5,Update type,Change type and click Update Tag,List type column reflects change.,,,,
+4,4.6,Clear name — validation,Delete name field content and click Update Tag,Error: Tag name is required. Form repopulates with empty name.,,,,
+4,4.7,All Tags back link,Click ← All Tags,Returns to list without saving changes.,,,,
+,,,,,,,,,
+5 — Rule Engine: Order Tags,,,,,,,,
+5,5.1,High Value,Order total > $500 | US shipping | logged-in customer,high-value tag fires,N/A,N/A,N/A,,CLI
+5,5.2,Unconfirmed Payment — pending,Order status = pending,unconfirmed-payment tag fires,N/A,N/A,N/A,,CLI
+5,5.3,Unconfirmed Payment — on-hold,Order status = on-hold,unconfirmed-payment tag fires,N/A,N/A,N/A,,CLI
+5,5.4,Address Mismatch,Billing postcode ≠ Shipping postcode,address-mismatch tag fires,N/A,N/A,N/A,,CLI
+5,5.5,Guest Checkout,No WP account (customer_id = 0),guest-checkout tag fires,N/A,N/A,N/A,,CLI
+5,5.6,First Order,Logged-in customer with no prior completed orders,first-order tag fires,N/A,N/A,N/A,,CLI
+5,5.7,NOT First Order — negative test,Logged-in customer with 1+ prior completed orders,first-order tag must NOT fire,N/A,N/A,N/A,,CLI
+5,5.8,Has Coupon,Valid coupon applied to order,has-coupon tag fires,N/A,N/A,N/A,,CLI
+5,5.9,Bulk Order — 10 items,Total quantity = 10,bulk tag fires,N/A,N/A,N/A,,CLI
+5,5.10,Bulk Order boundary — 9 items,Total quantity = 9,bulk tag must NOT fire,N/A,N/A,N/A,,CLI
+5,5.11,Local Pickup,Shipping method = local_pickup,local-pickup tag fires,N/A,N/A,N/A,,CLI
+5,5.12,Free Shipping,Shipping method = free_shipping,free-shipping tag fires,N/A,N/A,N/A,,CLI
+5,5.13,International — DE,Shipping country = DE (Germany),international tag fires,N/A,N/A,N/A,,CLI
+5,5.14,International — GB,Shipping country = GB (United Kingdom),international tag fires,N/A,N/A,N/A,,CLI
+5,5.15,NOT International — US,Shipping country = US,international tag must NOT fire,N/A,N/A,N/A,,CLI
+5,5.16,NOT International — CA,Shipping country = CA,international tag must NOT fire,N/A,N/A,N/A,,CLI
+5,5.17,Multi-rule match,$600 order | guest | US | first purchase,"high-value + guest-checkout + first-order all fire",N/A,N/A,N/A,,CLI
+5,5.18,No rule match — negative test,$50 | US shipping | repeat logged-in customer,No order tags applied,N/A,N/A,N/A,,CLI
+,,,,,,,,,
+6 — Rule Engine: Customer Tags,,,,,,,,
+6,6.1,New Customer,Exactly 1 completed order,new-customer fires. repeat-buyer and vip must NOT fire.,N/A,N/A,N/A,,CLI
+6,6.2,Repeat Buyer,3 completed orders,repeat-buyer fires. new-customer must NOT fire.,N/A,N/A,N/A,,CLI
+6,6.3,Repeat Buyer boundary — 2 orders,2 completed orders,repeat-buyer must NOT fire,N/A,N/A,N/A,,CLI
+6,6.4,VIP,LTV > $1000 AND 5+ completed orders,vip + repeat-buyer both fire. new-customer must NOT fire.,N/A,N/A,N/A,,CLI
+6,6.5,VIP — order count short,LTV > $1000 but only 4 completed orders,vip must NOT fire,N/A,N/A,N/A,,CLI
+6,6.6,VIP — LTV short,5+ completed orders but LTV ≤ $1000,vip must NOT fire,N/A,N/A,N/A,,CLI
+6,6.7,At Risk,2+ completed orders and last order > 90 days ago,at-risk tag fires,N/A,N/A,N/A,,CLI
+6,6.8,NOT At Risk — recent order,2+ completed orders and last order 30 days ago,at-risk must NOT fire,N/A,N/A,N/A,,CLI
+6,6.9,No customer tag match,2 orders | recent | LTV $200,No customer tags applied,N/A,N/A,N/A,,CLI
+,,,,,,,,,
+7 — Cross-Browser Visual Checks,,,,,,,,
+7,7.1,Badge pills render correctly,Load tag list in each browser,Coloured pill visible on every row. Not transparent or black.,,,,
+7,7.2,Badge text is readable,Look at badge text contrast,Text is readable against badge colour. No white-on-white or black-on-black.,,,,
+7,7.3,Colour picker opens and closes,Click swatch → select colour → click elsewhere,Picker opens cleanly. Closes when clicking outside. No UI glitch.,,,,
+7,7.4,Colour swatch reflects selection,Select a colour and close picker,Swatch button background updates to chosen colour.,,,,
+7,7.5,Live badge preview updates while typing,Type in Name field on add/edit form,Preview updates within 1 second of each keystroke. No lag.,,,,
+7,7.6,Table layout not broken,Load tag list and resize browser window,Columns stay aligned. No horizontal overflow on standard desktop width.,,,,
+7,7.7,Admin notices appear and dismiss,Create or delete a tag,Green or red notice bar appears at top. Click X to dismiss — notice disappears.,,,,
+7,7.8,Delete confirmation dialog,Click Delete on a tag,Browser native confirm() dialog appears before deletion.,,,,
+,,,,,,,,,
+8 — Automated Suite (Run Once),,,,,,,,
+8,8.1,CI script exits 0,"SSH to server. Run: bash /home/www/available/harperservice.tech/icon_test/ci/check-wc-tagger.sh",Last lines show: Rule-engine: PASS | UI tests: PASS | RESULT: PASS,N/A,N/A,N/A,,
+8,8.2,Rule engine: 14 passed 0 failed,Check CI output,14 passed 0 failed shown under rule engine section,N/A,N/A,N/A,,
+8,8.3,Playwright UI: 11 passed 0 failed,Check CI output,11 passed 0 failed shown under Playwright section,N/A,N/A,N/A,,
+,,,,,,,,,
+Sign-Off,,,,,,,,
+Section,Tester,Date,Chrome,Firefox,Edge,All Pass?,Blocker Failures,Notes,
+1 — Installation,,,,,,,,,
+2 — Tag List,,,,,,,,,
+3 — Add Tag,,,,,,,,,
+4 — Edit Tag,,,,,,,,,
+5 — Order Rules,,,,,,,,,
+6 — Customer Rules,,,,,,,,,
+7 — Visual / Cross-Browser,,,,,,,,,
+8 — Automated Suite,,,,,,,,,
