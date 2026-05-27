@@ -1,3 +1,6 @@
 vendor/
 composer.lock
 tests/.phpunit.result.cache
+
+# Build output
+dist/

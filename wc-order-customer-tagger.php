@@ -3,7 +3,7 @@
  * Plugin Name:       Harper Order & Customer Tagger
  * Plugin URI:        https://harper.agency
  * Description:       Auto-tag orders and customers using configurable rule-based conditions.
- * Version:           1.2.0
+ * Version:           1.3.0
  * Requires at least: 6.0
  * Requires PHP:      8.1
  * Author:            Harper Agency
