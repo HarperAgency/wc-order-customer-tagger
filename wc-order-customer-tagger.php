@@ -3,7 +3,7 @@
  * Plugin Name:       Harper Order & Customer Tagger
  * Plugin URI:        https://harper.agency
  * Description:       Auto-tag orders and customers using configurable rule-based conditions.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      8.1
  * Author:            Harper Agency
@@ -19,7 +19,7 @@ declare(strict_types=1);
 
 if (!defined('ABSPATH')) exit;
 
-define('WC_TAGGER_VERSION', '1.0.0');
+define('WC_TAGGER_VERSION', '1.1.0');
 define('WC_TAGGER_FILE',    __FILE__);
 define('WC_TAGGER_DIR',     plugin_dir_path(__FILE__));
 define('WC_TAGGER_URL',     plugin_dir_url(__FILE__));
@@ -66,6 +66,22 @@ add_action('plugins_loaded', function (): void {
     $repo      = new HarperAgency\WCTagger\Db\TagRepository();
     $tagsAdmin = new HarperAgency\WCTagger\Admin\TagsAdmin($repo);
     $tagsAdmin->register();
+
+    // ── Rule engine hooks ─────────────────────────────────────────────────────
+    $tagger = new HarperAgency\WCTagger\RuleEngine\Tagger();
+
+    // New order created at checkout
+    add_action('woocommerce_checkout_order_created', function (\WC_Order $order) use ($tagger): void {
+        $tagger->tagOrder($order);
+    });
+
+    // Order status changes (e.g. pending → processing after payment confirmation)
+    add_action('woocommerce_order_status_changed', function (int $orderId, string $from, string $to) use ($tagger): void {
+        $order = wc_get_order($orderId);
+        if ($order instanceof \WC_Order) {
+            $tagger->tagOrder($order);
+        }
+    }, 10, 3);
 });
 
 // ── HPOS compatibility declaration ───────────────────────────────────────────

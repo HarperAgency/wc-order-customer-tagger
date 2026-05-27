@@ -14,6 +14,11 @@ if (!defined('ABSPATH')) {
     define('ABSPATH', dirname(__DIR__) . '/');
 }
 
+// WordPress DB result-type constants
+if (!defined('ARRAY_A'))  define('ARRAY_A',  'ARRAY_A');
+if (!defined('ARRAY_N'))  define('ARRAY_N',  'ARRAY_N');
+if (!defined('OBJECT'))   define('OBJECT',   'OBJECT');
+
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 // ── Minimal WordPress / WooCommerce function stubs ────────────────────────────
