@@ -83,8 +83,12 @@ add_action('plugins_loaded', function (): void {
     $popover = new HarperAgency\WCTagger\Admin\TagPopover();
     $popover->register();
 
+    // ── Grid filters + bulk re-run ────────────────────────────────────────────
+    $tagger      = new HarperAgency\WCTagger\RuleEngine\Tagger();
+    $gridFilters = new HarperAgency\WCTagger\Admin\GridFilters($tagger);
+    $gridFilters->register();
+
     // ── Rule engine hooks ─────────────────────────────────────────────────────
-    $tagger = new HarperAgency\WCTagger\RuleEngine\Tagger();
 
     // New order created at checkout
     add_action('woocommerce_checkout_order_created', function (\WC_Order $order) use ($tagger): void {
