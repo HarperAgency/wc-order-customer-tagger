@@ -45,8 +45,19 @@ if (file_exists(WC_TAGGER_DIR . 'vendor/autoload.php')) {
 // ── Boot ──────────────────────────────────────────────────────────────────────
 
 register_activation_hook(__FILE__, function (): void {
-    HarperAgency\WCTagger\Db\Schema::install();
-    HarperAgency\WCTagger\Db\Seeder::maybeRun();
+    try {
+        HarperAgency\WCTagger\Db\Schema::install();
+        HarperAgency\WCTagger\Db\Seeder::maybeRun();
+    } catch (\Throwable $e) {
+        // Surface DB errors as a deactivation message rather than a white screen
+        deactivate_plugins(plugin_basename(__FILE__));
+        wp_die(
+            esc_html__('Harper Order & Customer Tagger could not be activated: ', 'wc-order-customer-tagger')
+            . esc_html($e->getMessage()),
+            esc_html__('Plugin Activation Error', 'wc-order-customer-tagger'),
+            ['back_link' => true]
+        );
+    }
 });
 
 add_action('plugins_loaded', function (): void {

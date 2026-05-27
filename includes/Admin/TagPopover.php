@@ -68,7 +68,7 @@ class TagPopover
         global $wpdb;
         $tagsTable = $wpdb->prefix . 'harper_tagger_tags';
         $tags = $wpdb->get_results(
-            "SELECT id, name, color, image_url FROM {$tagsTable} ORDER BY name ASC",
+            $wpdb->prepare('SELECT id, name, color, image_url FROM `%i` ORDER BY name ASC', $tagsTable),
             ARRAY_A
         ) ?: [];
 
