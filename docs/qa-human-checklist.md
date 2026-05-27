@@ -2,7 +2,7 @@
 
 **Test site:** https://harperservice.tech/icon_test/wc/wp-admin  
 **Login:** `harperadmin` / `Harper@Test2026!`  
-**Plugin version:** 1.2.0  
+**Plugin version:** 1.3.0  
 **Date tested:** _______________  
 **Tester:** _______________
 
@@ -115,7 +115,50 @@ Go to: **WooCommerce → Order & Cust. Tags → Tags → Add New Tag**
 
 ---
 
-## 7 — Cross-Browser Spot Check
+## 7 — Filter by Tag (NEW in v1.3)
+
+### 7a — Orders grid filter
+
+Go to: **WooCommerce → Orders**
+
+| # | What to check | Pass | Fail | Notes |
+|---|---|---|---|---|
+| 7a.1 | A "Filter by tag…" dropdown appears above the orders table | | | |
+| 7a.2 | Dropdown lists all 14 seed tags | | | |
+| 7a.3 | Selecting a tag and clicking Filter shows only orders tagged with it | | | |
+| 7a.4 | The dropdown stays selected after the page reloads (selection preserved) | | | |
+| 7a.5 | Selecting the blank "Filter by tag…" option and clicking Filter clears the filter | | | |
+| 7a.6 | Filtered results page shows no PHP errors or warnings | | | |
+
+### 7b — Customers / Users grid filter
+
+Go to: **WordPress Admin → Users**
+
+| # | What to check | Pass | Fail | Notes |
+|---|---|---|---|---|
+| 7b.1 | A "Filter by tag…" dropdown appears above the users table | | | |
+| 7b.2 | Dropdown lists customer tags only (not order-only tags) | | | |
+| 7b.3 | Selecting a tag filters the users list to only tagged customers | | | |
+| 7b.4 | Selection preserved after reload | | | |
+| 7b.5 | Filtered results page shows no PHP errors or warnings | | | |
+
+---
+
+## 8 — Bulk Re-run Tagger Rules (NEW in v1.3)
+
+Go to: **WooCommerce → Orders**
+
+| # | What to check | Pass | Fail | Notes |
+|---|---|---|---|---|
+| 8.1 | "Re-run Tagger Rules" option appears in the Bulk Actions dropdown | | | |
+| 8.2 | Check one or more orders, choose "Re-run Tagger Rules", click Apply | | | |
+| 8.3 | Page reloads and shows a green success notice: "Tagger rules re-run on N order(s)" | | | |
+| 8.4 | Tags on the selected orders reflect the current rules after re-run | | | |
+| 8.5 | Page shows no PHP errors or warnings | | | |
+
+---
+
+## 10 — Cross-Browser Spot Check
 
 Repeat tests **1.5 → 1.13** in each browser:
 
@@ -127,7 +170,7 @@ Repeat tests **1.5 → 1.13** in each browser:
 
 ---
 
-## 8 — Edge Cases
+## 11 — Edge Cases
 
 | # | What to check | Pass | Fail | Notes |
 |---|---|---|---|---|
@@ -140,7 +183,7 @@ Repeat tests **1.5 → 1.13** in each browser:
 
 ---
 
-## 9 — Uninstall (Do Last — Destructive)
+## 12 — Uninstall (Do Last — Destructive)
 
 > Only run this if you want to verify clean removal. You will need to re-activate and re-seed after.
 
@@ -163,9 +206,11 @@ Repeat tests **1.5 → 1.13** in each browser:
 | 4 — Customer profile section | | | PASS / FAIL | |
 | 5 — Rule engine auto-tagging | | | PASS / FAIL | |
 | 6 — Icon tags | | | PASS / FAIL | |
-| 7 — Cross-browser | | | PASS / FAIL | |
-| 8 — Edge cases | | | PASS / FAIL | |
-| 9 — Uninstall | | | PASS / FAIL / SKIP | |
+| 7 — Filter by tag (orders + customers) | | | PASS / FAIL | |
+| 8 — Bulk re-run rules | | | PASS / FAIL | |
+| 9 — Cross-browser | | | PASS / FAIL | |
+| 10 — Edge cases | | | PASS / FAIL | |
+| 11 — Uninstall | | | PASS / FAIL / SKIP | |
 
 **Overall result:** PASS / FAIL  
 **Sign-off:** _______________ Date: _______________
