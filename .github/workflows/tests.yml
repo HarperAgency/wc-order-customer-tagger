@@ -1,0 +1,74 @@
+name: Tests
+
+on:
+  push:
+    branches: [ trunk, main, master ]
+  pull_request:
+    branches: [ trunk, main, master ]
+
+jobs:
+  # ── Unit tests ──────────────────────────────────────────────────────────────
+  unit:
+    name: Unit Tests (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [ '8.1', '8.2', '8.3' ]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run unit tests
+        run: php vendor/bin/phpunit --bootstrap tests/bootstrap.php tests/
+
+  # ── Playwright UI tests ─────────────────────────────────────────────────────
+  playwright:
+    name: Playwright UI Tests
+    runs-on: ubuntu-latest
+    # Only run against live dev site — skip on forks to protect credentials
+    if: github.repository_owner == 'HarperAgency'
+
+    defaults:
+      run:
+        working-directory: ./playwright
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: playwright/package-lock.json
+
+      - name: Install Playwright deps
+        run: npm ci
+
+      - name: Install browsers
+        run: npx playwright install --with-deps chromium firefox
+
+      - name: Run Playwright tests
+        run: npx playwright test
+        env:
+          WC_ADMIN_USER: ${{ secrets.WC_ADMIN_USER }}
+          WC_ADMIN_PASS: ${{ secrets.WC_ADMIN_PASS }}
+          BASE_URL: ${{ secrets.WC_BASE_URL }}
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright/playwright-report/
+          retention-days: 7
