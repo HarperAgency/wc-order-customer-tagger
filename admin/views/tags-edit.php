@@ -2,9 +2,10 @@
 /**
  * Admin view: add / edit tag form.
  *
- * @var array<string, mixed>|null $tag     Existing tag row, or null for new
- * @var array<string, string>     $errors  Validation errors
- * @var array<string, mixed>      $posted  Re-populated POST data after error
+ * @var array<string, mixed>|null             $tag    Existing tag row, or null for new
+ * @var array<string, string>                 $errors Validation errors
+ * @var array<string, mixed>                  $posted Re-populated POST data after error
+ * @var array<int, array<string, mixed>>      $rules  Rules attached to this tag
  */
 if (!defined('ABSPATH')) exit;
 
@@ -107,4 +108,73 @@ $tagId = $isNew ? 0 : (int) $tag['id'];
 
         <?php submit_button($isNew ? __('Create Tag', 'wc-order-customer-tagger') : __('Update Tag', 'wc-order-customer-tagger')); ?>
     </form>
+
+    <?php if (!$isNew): ?>
+    <hr>
+    <h2><?php esc_html_e('Rules for this tag', 'wc-order-customer-tagger'); ?></h2>
+
+    <?php
+    $addRuleUrl  = add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'rule-add',  'tag_id' => $tagId], admin_url('admin.php'));
+    $rulesUrl    = add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'rules',     'tag_id' => $tagId], admin_url('admin.php'));
+    $operatorLabels = ['AND' => __('AND', 'wc-order-customer-tagger'), 'OR' => __('OR', 'wc-order-customer-tagger')];
+    ?>
+
+    <?php if (empty($rules)): ?>
+    <p><?php esc_html_e('No rules yet.', 'wc-order-customer-tagger'); ?>
+       <a href="<?php echo esc_url($addRuleUrl); ?>"><?php esc_html_e('Add the first rule', 'wc-order-customer-tagger'); ?></a>.
+    </p>
+    <?php else: ?>
+    <table class="wp-list-table widefat fixed striped harper-tagger-list">
+        <thead>
+            <tr>
+                <th style="width:40px"><?php esc_html_e('ID', 'wc-order-customer-tagger'); ?></th>
+                <th><?php esc_html_e('Label', 'wc-order-customer-tagger'); ?></th>
+                <th style="width:60px"><?php esc_html_e('Op', 'wc-order-customer-tagger'); ?></th>
+                <th style="width:70px"><?php esc_html_e('Priority', 'wc-order-customer-tagger'); ?></th>
+                <th style="width:70px"><?php esc_html_e('Active', 'wc-order-customer-tagger'); ?></th>
+                <th style="width:80px"><?php esc_html_e('Conditions', 'wc-order-customer-tagger'); ?></th>
+                <th><?php esc_html_e('Actions', 'wc-order-customer-tagger'); ?></th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($rules as $rule):
+            $ruleId  = (int) $rule['id'];
+            $editUrl = add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'rule-edit',   'tag_id' => $tagId, 'id' => $ruleId], admin_url('admin.php'));
+            $delUrl  = wp_nonce_url(
+                add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'rule-delete', 'tag_id' => $tagId, 'id' => $ruleId], admin_url('admin.php')),
+                'harper_tagger_delete_rule_' . $ruleId
+            );
+        ?>
+        <tr>
+            <td><?php echo esc_html((string) $ruleId); ?></td>
+            <td><?php echo esc_html($rule['label']); ?></td>
+            <td><?php echo esc_html($operatorLabels[$rule['operator']] ?? $rule['operator']); ?></td>
+            <td><?php echo esc_html((string) $rule['priority']); ?></td>
+            <td><?php echo $rule['is_active'] ? esc_html__('Yes', 'wc-order-customer-tagger') : esc_html__('No', 'wc-order-customer-tagger'); ?></td>
+            <td><?php echo esc_html((string) count((array) ($rule['conditions'] ?? []))); ?></td>
+            <td>
+                <a href="<?php echo esc_url($editUrl); ?>"><?php esc_html_e('Edit', 'wc-order-customer-tagger'); ?></a>
+                &nbsp;|&nbsp;
+                <a href="<?php echo esc_url($delUrl); ?>"
+                   onclick="return confirm('<?php esc_attr_e('Delete this rule? This cannot be undone.', 'wc-order-customer-tagger'); ?>')"
+                   class="harper-tagger-delete-link">
+                    <?php esc_html_e('Delete', 'wc-order-customer-tagger'); ?>
+                </a>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?php endif; ?>
+
+    <p>
+        <a href="<?php echo esc_url($addRuleUrl); ?>" class="button button-secondary">
+            <?php esc_html_e('+ Add Rule', 'wc-order-customer-tagger'); ?>
+        </a>
+        &nbsp;
+        <a href="<?php echo esc_url($rulesUrl); ?>" class="button button-secondary">
+            <?php esc_html_e('Manage Rules', 'wc-order-customer-tagger'); ?>
+        </a>
+    </p>
+    <?php endif; ?>
 </div>

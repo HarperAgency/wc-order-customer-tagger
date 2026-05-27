@@ -3,7 +3,7 @@
  * Plugin Name:       Harper Order & Customer Tagger
  * Plugin URI:        https://harper.agency
  * Description:       Auto-tag orders and customers using configurable rule-based conditions.
- * Version:           1.1.0
+ * Version:           1.2.0
  * Requires at least: 6.0
  * Requires PHP:      8.1
  * Author:            Harper Agency
@@ -19,7 +19,7 @@ declare(strict_types=1);
 
 if (!defined('ABSPATH')) exit;
 
-define('WC_TAGGER_VERSION', '1.1.0');
+define('WC_TAGGER_VERSION', '1.2.0');
 define('WC_TAGGER_FILE',    __FILE__);
 define('WC_TAGGER_DIR',     plugin_dir_path(__FILE__));
 define('WC_TAGGER_URL',     plugin_dir_url(__FILE__));
@@ -64,8 +64,15 @@ add_action('plugins_loaded', function (): void {
     HarperAgency\WCTagger\Db\Schema::maybeUpgrade();
 
     $repo      = new HarperAgency\WCTagger\Db\TagRepository();
-    $tagsAdmin = new HarperAgency\WCTagger\Admin\TagsAdmin($repo);
+    $ruleRepo  = new HarperAgency\WCTagger\Db\RuleRepository();
+    $tagsAdmin = new HarperAgency\WCTagger\Admin\TagsAdmin($repo, $ruleRepo);
     $tagsAdmin->register();
+
+    $orderMeta = new HarperAgency\WCTagger\Admin\OrderTagsMetaBox();
+    $orderMeta->register();
+
+    $customerProfile = new HarperAgency\WCTagger\Admin\CustomerTagsProfile();
+    $customerProfile->register();
 
     // ── Rule engine hooks ─────────────────────────────────────────────────────
     $tagger = new HarperAgency\WCTagger\RuleEngine\Tagger();

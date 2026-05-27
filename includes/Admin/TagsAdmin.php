@@ -1,23 +1,26 @@
 <?php
 /**
  * Admin page: WooCommerce → Order & Customer Tags
- * Handles list, add, edit, and delete actions.
+ * Handles list, add, edit, and delete actions for tags and rules.
  */
 declare(strict_types=1);
 
 namespace HarperAgency\WCTagger\Admin;
 
 use HarperAgency\WCTagger\Db\TagRepository;
+use HarperAgency\WCTagger\Db\RuleRepository;
 
 if (!defined('ABSPATH')) exit;
 
 class TagsAdmin
 {
-    private TagRepository $repo;
+    private TagRepository  $repo;
+    private RuleRepository $ruleRepo;
 
-    public function __construct(TagRepository $repo)
+    public function __construct(TagRepository $repo, RuleRepository $ruleRepo)
     {
-        $this->repo = $repo;
+        $this->repo     = $repo;
+        $this->ruleRepo = $ruleRepo;
     }
 
     public function register(): void
@@ -67,17 +70,23 @@ class TagsAdmin
     {
         $action = sanitize_key($_REQUEST['action'] ?? 'list');
         $id     = (int) ($_GET['id'] ?? 0);
+        $tagId  = (int) ($_GET['tag_id'] ?? 0);
 
         match ($action) {
-            'add'    => $this->pageEdit(null),
-            'edit'   => $this->pageEdit($id),
-            'save'   => $this->handleSave(),
-            'delete' => $this->handleDelete($id),
-            default  => $this->pageList(),
+            'add'         => $this->pageEdit(null),
+            'edit'        => $this->pageEdit($id),
+            'save'        => $this->handleSave(),
+            'delete'      => $this->handleDelete($id),
+            'rules'       => $this->pageRulesList($tagId),
+            'rule-add'    => $this->pageRuleEdit($tagId, null),
+            'rule-edit'   => $this->pageRuleEdit($tagId, $id),
+            'rule-save'   => $this->handleRuleSave(),
+            'rule-delete' => $this->handleRuleDelete($id),
+            default       => $this->pageList(),
         };
     }
 
-    // ── List page ─────────────────────────────────────────────────────────────
+    // ── Tag list page ─────────────────────────────────────────────────────────
 
     private function pageList(): void
     {
@@ -93,7 +102,7 @@ class TagsAdmin
         require WC_TAGGER_DIR . 'admin/views/tags-list.php';
     }
 
-    // ── Edit / Add page ───────────────────────────────────────────────────────
+    // ── Tag edit / add page ───────────────────────────────────────────────────
 
     private function pageEdit(?int $id): void
     {
@@ -103,12 +112,13 @@ class TagsAdmin
             wp_die(esc_html__('Tag not found.', 'wc-order-customer-tagger'));
         }
 
+        $rules  = $id ? $this->ruleRepo->findByTagId($id) : [];
         $errors = $this->getErrors();
         $posted = $this->getPosted();           // repopulate form after validation failure
         require WC_TAGGER_DIR . 'admin/views/tags-edit.php';
     }
 
-    // ── Save handler ──────────────────────────────────────────────────────────
+    // ── Tag save handler ──────────────────────────────────────────────────────
 
     private function handleSave(): void
     {
@@ -163,7 +173,7 @@ class TagsAdmin
         exit;
     }
 
-    // ── Delete handler ────────────────────────────────────────────────────────
+    // ── Tag delete handler ────────────────────────────────────────────────────
 
     private function handleDelete(int $id): void
     {
@@ -175,6 +185,133 @@ class TagsAdmin
 
         $this->stashNotice(__('Tag deleted.', 'wc-order-customer-tagger'), 'updated');
         wp_safe_redirect(add_query_arg(['page' => 'harper-tagger-tags'], admin_url('admin.php')));
+        exit;
+    }
+
+    // ── Rules list page ───────────────────────────────────────────────────────
+
+    private function pageRulesList(int $tagId): void
+    {
+        $tag = $tagId ? $this->repo->findById($tagId) : null;
+
+        if (!$tag) {
+            wp_die(esc_html__('Tag not found.', 'wc-order-customer-tagger'));
+        }
+
+        $rules  = $this->ruleRepo->findByTagId($tagId);
+        $notice = $this->popNotice();
+        require WC_TAGGER_DIR . 'admin/views/rules-list.php';
+    }
+
+    // ── Rule edit / add page ──────────────────────────────────────────────────
+
+    private function pageRuleEdit(int $tagId, ?int $ruleId): void
+    {
+        $tag = $tagId ? $this->repo->findById($tagId) : null;
+
+        if (!$tag) {
+            wp_die(esc_html__('Tag not found.', 'wc-order-customer-tagger'));
+        }
+
+        $rule   = $ruleId ? $this->ruleRepo->findById($ruleId) : null;
+        $errors = $this->getErrors();
+        $posted = $this->getPosted();
+        require WC_TAGGER_DIR . 'admin/views/rules-edit.php';
+    }
+
+    // ── Rule save handler ─────────────────────────────────────────────────────
+
+    private function handleRuleSave(): void
+    {
+        check_admin_referer('harper_tagger_save_rule');
+
+        $ruleId  = (int) ($_POST['rule_id'] ?? 0);
+        $tagId   = (int) ($_POST['tag_id'] ?? 0);
+        $label   = trim(sanitize_text_field($_POST['label'] ?? ''));
+        $trigger = sanitize_key($_POST['rule_trigger'] ?? 'order_placed');
+        $op      = strtoupper(sanitize_key($_POST['operator'] ?? 'and'));
+        $priority = (int) ($_POST['priority'] ?? 10);
+        $isActive = isset($_POST['is_active']) ? 1 : 0;
+
+        // Decode conditions from hidden JSON field
+        $conditionsRaw = stripslashes(sanitize_textarea_field($_POST['conditions_json'] ?? '[]'));
+        $conditions    = json_decode($conditionsRaw, true);
+        if (!is_array($conditions)) {
+            $conditions = [];
+        }
+
+        // ── Validate ──────────────────────────────────────────────────────────
+        $errors = [];
+
+        if (!$this->repo->findById($tagId)) {
+            $errors[] = __('Invalid tag.', 'wc-order-customer-tagger');
+        }
+
+        if ($label === '') {
+            $errors[] = __('Rule label is required.', 'wc-order-customer-tagger');
+        } elseif (strlen($label) > 100) {
+            $errors[] = __('Rule label must be 100 characters or fewer.', 'wc-order-customer-tagger');
+        }
+
+        if (!in_array($op, RuleRepository::VALID_OPERATORS, true)) {
+            $errors[] = __('Invalid operator.', 'wc-order-customer-tagger');
+        }
+
+        if ($errors) {
+            $this->stashErrors($errors);
+            $this->stashPosted(compact('label', 'trigger', 'op', 'priority', 'isActive', 'conditionsRaw'));
+            $redirect = $ruleId
+                ? add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'rule-edit', 'tag_id' => $tagId, 'id' => $ruleId], admin_url('admin.php'))
+                : add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'rule-add',  'tag_id' => $tagId], admin_url('admin.php'));
+            wp_safe_redirect($redirect);
+            exit;
+        }
+
+        // Sanitize each condition
+        $conditions = $this->sanitizeConditions($conditions);
+
+        $data = [
+            'label'        => $label,
+            'rule_trigger' => $trigger,
+            'operator'     => $op,
+            'conditions'   => $conditions,
+            'priority'     => $priority,
+            'is_active'    => $isActive,
+        ];
+
+        if ($ruleId > 0) {
+            $this->ruleRepo->update($ruleId, $data);
+            $this->stashNotice(__('Rule updated.', 'wc-order-customer-tagger'), 'updated');
+        } else {
+            $this->ruleRepo->insert($tagId, $data);
+            $this->stashNotice(__('Rule created.', 'wc-order-customer-tagger'), 'updated');
+        }
+
+        wp_safe_redirect(add_query_arg([
+            'page'   => 'harper-tagger-tags',
+            'action' => 'rules',
+            'tag_id' => $tagId,
+        ], admin_url('admin.php')));
+        exit;
+    }
+
+    // ── Rule delete handler ───────────────────────────────────────────────────
+
+    private function handleRuleDelete(int $id): void
+    {
+        $tagId = (int) ($_GET['tag_id'] ?? 0);
+        check_admin_referer('harper_tagger_delete_rule_' . $id);
+
+        if ($id > 0) {
+            $this->ruleRepo->delete($id);
+        }
+
+        $this->stashNotice(__('Rule deleted.', 'wc-order-customer-tagger'), 'updated');
+        wp_safe_redirect(add_query_arg([
+            'page'   => 'harper-tagger-tags',
+            'action' => 'rules',
+            'tag_id' => $tagId,
+        ], admin_url('admin.php')));
         exit;
     }
 
@@ -217,5 +354,49 @@ class TagsAdmin
         $posted = get_transient($key);
         delete_transient($key);
         return $posted ?: [];
+    }
+
+    // ── Condition sanitiser ───────────────────────────────────────────────────
+
+    /**
+     * Sanitise raw decoded conditions array from JSON POST data.
+     *
+     * @param array<mixed> $conditions
+     * @return array<int, array{field: string, operator: string, value: mixed}>
+     */
+    private function sanitizeConditions(array $conditions): array
+    {
+        $valid = [];
+        foreach ($conditions as $c) {
+            if (!is_array($c)) {
+                continue;
+            }
+            $field    = sanitize_key((string) ($c['field']    ?? ''));
+            $operator = sanitize_key((string) ($c['operator'] ?? ''));
+            $value    = $c['value'] ?? '';
+
+            if ($field === '' || $operator === '') {
+                continue;
+            }
+
+            // For in/not_in, value may be a comma-separated string → convert to array
+            if (in_array($operator, ['in', 'not_in'], true) && is_string($value)) {
+                $value = array_values(array_filter(array_map('trim', explode(',', $value))));
+            }
+
+            // For boolean operators, value is irrelevant — normalise to empty string
+            if (in_array($operator, ['is_true', 'is_false'], true)) {
+                $value = '';
+            }
+
+            $valid[] = [
+                'field'    => $field,
+                'operator' => $operator,
+                'value'    => is_array($value)
+                    ? array_map('sanitize_text_field', $value)
+                    : sanitize_text_field((string) $value),
+            ];
+        }
+        return $valid;
     }
 }

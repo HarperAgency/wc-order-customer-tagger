@@ -38,3 +38,91 @@
     font-size: 13px;
     padding: 3px 10px;
 }
+
+/* Tag/Rule edit: subtitle next to heading */
+.harper-tagger-subtitle {
+    font-size: 14px;
+    font-weight: 400;
+    color: #646970;
+    margin-left: 8px;
+}
+
+/* ── Rule condition builder ─────────────────────────────────────────────── */
+
+#harper-conditions-wrapper {
+    margin: 12px 0;
+}
+
+.harper-condition-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    background: #f9f9f9;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+}
+
+.harper-condition-row .harper-cond-field {
+    min-width: 200px;
+    flex: 0 0 auto;
+}
+
+.harper-condition-row .harper-cond-operator {
+    min-width: 170px;
+    flex: 0 0 auto;
+}
+
+.harper-condition-row .harper-cond-value {
+    flex: 1 1 180px;
+    min-width: 120px;
+}
+
+.harper-condition-row .harper-remove-condition {
+    flex: 0 0 auto;
+    color: #b32d2e;
+    border-color: #b32d2e;
+    padding: 0 8px;
+    font-size: 16px;
+    line-height: 1.6;
+    cursor: pointer;
+}
+
+.harper-condition-row .harper-remove-condition:hover {
+    background: #b32d2e;
+    color: #fff;
+}
+
+#harper-add-condition {
+    margin-top: 4px;
+}
+
+/* ── Tag display meta boxes & profile section ──────────────────────────── */
+
+.harper-tagger-metabox-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px 0;
+}
+
+.harper-tagger-no-tags {
+    color: #646970;
+    font-style: italic;
+}
+
+.harper-tagger-profile-section {
+    margin-top: 20px;
+}
+
+.harper-tagger-profile-section h2 {
+    font-size: 1.3em;
+    padding: 9px 0;
+    border-top: 1px solid #dcdcde;
+}
+
+.harper-tagger-profile-section .harper-tagger-metabox-tags {
+    margin-top: 6px;
+}
