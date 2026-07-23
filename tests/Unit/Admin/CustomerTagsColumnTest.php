@@ -4,10 +4,10 @@
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Tests\Unit\Admin;
+namespace ClarityMomentum\WCTagger\Tests\Unit\Admin;
 
 use PHPUnit\Framework\TestCase;
-use HarperAgency\WCTagger\Admin\CustomerTagsColumn;
+use ClarityMomentum\WCTagger\Admin\CustomerTagsColumn;
 
 class CustomerTagsColumnTest extends TestCase
 {
@@ -20,16 +20,16 @@ class CustomerTagsColumnTest extends TestCase
 
     // ── addColumn ─────────────────────────────────────────────────────────────
 
-    public function testAddsHarperCustomerTagsKey(): void
+    public function testAddsCmCustomerTagsKey(): void
     {
         $result = $this->col->addColumn(['username' => 'Username', 'email' => 'Email']);
-        $this->assertArrayHasKey('harper_customer_tags', $result);
+        $this->assertArrayHasKey('cm_customer_tags', $result);
     }
 
     public function testColumnLabelIsCorrect(): void
     {
         $result = $this->col->addColumn([]);
-        $this->assertSame('Tags', $result['harper_customer_tags']);
+        $this->assertSame('Tags', $result['cm_customer_tags']);
     }
 
     public function testExistingColumnsPreserved(): void
@@ -49,7 +49,7 @@ class CustomerTagsColumnTest extends TestCase
         $wpdb = $this->makeWpdb([]);
 
         $result = $this->col->renderColumn('', 'email', 1);
-        $this->assertSame('', $result, 'Non-harper_customer_tags columns should pass through empty');
+        $this->assertSame('', $result, 'Non-cm_customer_tags columns should pass through empty');
     }
 
     public function testHasClickableWrapper(): void
@@ -57,8 +57,8 @@ class CustomerTagsColumnTest extends TestCase
         global $wpdb;
         $wpdb = $this->makeWpdb([]);
 
-        $result = $this->col->renderColumn('', 'harper_customer_tags', 7);
-        $this->assertStringContainsString('harper-tagger-cell', $result);
+        $result = $this->col->renderColumn('', 'cm_customer_tags', 7);
+        $this->assertStringContainsString('cm-tagger-cell', $result);
         $this->assertStringContainsString('data-type="customer"', $result);
         $this->assertStringContainsString('data-id="7"', $result);
     }
@@ -68,7 +68,7 @@ class CustomerTagsColumnTest extends TestCase
         global $wpdb;
         $wpdb = $this->makeWpdb([]);
 
-        $result = $this->col->renderColumn('', 'harper_customer_tags', 1);
+        $result = $this->col->renderColumn('', 'cm_customer_tags', 1);
         $this->assertStringContainsString('—', $result);
     }
 
@@ -79,10 +79,10 @@ class CustomerTagsColumnTest extends TestCase
             ['id' => 1, 'name' => 'loyal', 'color' => '#8e44ad', 'image_url' => null],
         ]);
 
-        $result = $this->col->renderColumn('', 'harper_customer_tags', 5);
+        $result = $this->col->renderColumn('', 'cm_customer_tags', 5);
         $this->assertStringContainsString('loyal', $result);
         $this->assertStringContainsString('#8e44ad', $result);
-        $this->assertStringContainsString('harper-tagger-badge', $result);
+        $this->assertStringContainsString('cm-tagger-badge', $result);
     }
 
     public function testShowsImgForIconTag(): void
@@ -92,10 +92,10 @@ class CustomerTagsColumnTest extends TestCase
             ['id' => 3, 'name' => 'vip', 'color' => '#000', 'image_url' => 'https://example.com/crown.png'],
         ]);
 
-        $result = $this->col->renderColumn('', 'harper_customer_tags', 7);
+        $result = $this->col->renderColumn('', 'cm_customer_tags', 7);
         $this->assertStringContainsString('<img', $result);
         $this->assertStringContainsString('crown.png', $result);
-        $this->assertStringNotContainsString('harper-tagger-badge', $result);
+        $this->assertStringNotContainsString('cm-tagger-badge', $result);
     }
 
     public function testShowsMultipleTags(): void
@@ -106,7 +106,7 @@ class CustomerTagsColumnTest extends TestCase
             ['id' => 2, 'name' => 'high-spend',  'color' => '#e74c3c', 'image_url' => null],
         ]);
 
-        $result = $this->col->renderColumn('', 'harper_customer_tags', 9);
+        $result = $this->col->renderColumn('', 'cm_customer_tags', 9);
         $this->assertStringContainsString('loyal', $result);
         $this->assertStringContainsString('high-spend', $result);
     }
@@ -116,7 +116,7 @@ class CustomerTagsColumnTest extends TestCase
         global $wpdb;
         $wpdb = $this->makeWpdb([]);
 
-        $result = $this->col->renderColumn('', 'harper_customer_tags', 1);
+        $result = $this->col->renderColumn('', 'cm_customer_tags', 1);
         $this->assertIsString($result);
     }
 
@@ -127,7 +127,7 @@ class CustomerTagsColumnTest extends TestCase
             ['id' => 1, 'name' => '<script>alert(1)</script>', 'color' => '#000', 'image_url' => null],
         ]);
 
-        $result = $this->col->renderColumn('', 'harper_customer_tags', 1);
+        $result = $this->col->renderColumn('', 'cm_customer_tags', 1);
         $this->assertStringNotContainsString('<script>', $result,
             'Tag name must be escaped before output');
     }

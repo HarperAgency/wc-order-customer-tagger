@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) exit;
 $tagId    = (int) $tag['id'];
 $isNew    = ($rule === null);
 $title    = $isNew ? __('Add Rule', 'wc-order-customer-tagger') : __('Edit Rule', 'wc-order-customer-tagger');
-$backUrl  = add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'rules', 'tag_id' => $tagId], admin_url('admin.php'));
+$backUrl  = add_query_arg(['page' => 'cm-tagger-tags', 'action' => 'rules', 'tag_id' => $tagId], admin_url('admin.php'));
 $ruleId   = $isNew ? 0 : (int) $rule['id'];
 
 // Merge existing data with any re-posted data (re-posted wins)
@@ -71,10 +71,10 @@ $operatorsByType = [
     ],
 ];
 ?>
-<div class="wrap harper-tagger">
+<div class="wrap cm-tagger">
     <h1>
         <?php echo esc_html($title); ?>
-        <span class="harper-tagger-subtitle">
+        <span class="cm-tagger-subtitle">
             <?php
             /* translators: %s: tag name */
             printf(esc_html__('for tag: %s', 'wc-order-customer-tagger'), esc_html($tag['name']));
@@ -92,20 +92,20 @@ $operatorsByType = [
     </div>
     <?php endif; ?>
 
-    <form method="post" id="harper-rule-form"
-          action="<?php echo esc_url(add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'rule-save'], admin_url('admin.php'))); ?>">
-        <?php wp_nonce_field('harper_tagger_save_rule'); ?>
+    <form method="post" id="cm-rule-form"
+          action="<?php echo esc_url(add_query_arg(['page' => 'cm-tagger-tags', 'action' => 'rule-save'], admin_url('admin.php'))); ?>">
+        <?php wp_nonce_field('cm_tagger_save_rule'); ?>
         <input type="hidden" name="rule_id"  value="<?php echo esc_attr((string) $ruleId); ?>">
         <input type="hidden" name="tag_id"   value="<?php echo esc_attr((string) $tagId); ?>">
-        <input type="hidden" name="conditions_json" id="harper-conditions-json" value="">
+        <input type="hidden" name="conditions_json" id="cm-conditions-json" value="">
 
         <table class="form-table" role="presentation">
             <tr>
                 <th scope="row">
-                    <label for="harper-rule-label"><?php esc_html_e('Label', 'wc-order-customer-tagger'); ?> <span class="required">*</span></label>
+                    <label for="cm-rule-label"><?php esc_html_e('Label', 'wc-order-customer-tagger'); ?> <span class="required">*</span></label>
                 </th>
                 <td>
-                    <input type="text" id="harper-rule-label" name="label" class="regular-text"
+                    <input type="text" id="cm-rule-label" name="label" class="regular-text"
                            value="<?php echo esc_attr((string) $val['label']); ?>" maxlength="100" required>
                     <p class="description"><?php esc_html_e('Human-readable description, e.g. "Order total over $500".', 'wc-order-customer-tagger'); ?></p>
                 </td>
@@ -130,10 +130,10 @@ $operatorsByType = [
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="harper-rule-priority"><?php esc_html_e('Priority', 'wc-order-customer-tagger'); ?></label>
+                    <label for="cm-rule-priority"><?php esc_html_e('Priority', 'wc-order-customer-tagger'); ?></label>
                 </th>
                 <td>
-                    <input type="number" id="harper-rule-priority" name="priority" min="0" max="9999"
+                    <input type="number" id="cm-rule-priority" name="priority" min="0" max="9999"
                            value="<?php echo esc_attr((string) (int) $val['priority']); ?>" class="small-text">
                     <p class="description"><?php esc_html_e('Lower numbers run first. Default: 10.', 'wc-order-customer-tagger'); ?></p>
                 </td>
@@ -166,7 +166,7 @@ $operatorsByType = [
         $operatorsByTypeJson = wp_json_encode($operatorsByType);
         ?>
 
-        <div id="harper-conditions-wrapper">
+        <div id="cm-conditions-wrapper">
             <?php
             $conditionsToRender = !empty($existingConditions) ? $existingConditions : [['field' => '', 'operator' => '', 'value' => '']];
             foreach ($conditionsToRender as $idx => $cond):
@@ -179,8 +179,8 @@ $operatorsByType = [
                 $condType  = isset($fieldDefs[$condField]) ? $fieldDefs[$condField]['type'] : 'numeric';
                 $booleanOp = in_array($condOp, ['is_true', 'is_false'], true);
             ?>
-            <div class="harper-condition-row" data-idx="<?php echo esc_attr((string) $idx); ?>">
-                <select class="harper-cond-field" name="cond_field[]" aria-label="<?php esc_attr_e('Field', 'wc-order-customer-tagger'); ?>">
+            <div class="cm-condition-row" data-idx="<?php echo esc_attr((string) $idx); ?>">
+                <select class="cm-cond-field" name="cond_field[]" aria-label="<?php esc_attr_e('Field', 'wc-order-customer-tagger'); ?>">
                     <option value=""><?php esc_html_e('— select field —', 'wc-order-customer-tagger'); ?></option>
                     <?php foreach ($fieldDefs as $key => $def): ?>
                     <option value="<?php echo esc_attr($key); ?>"
@@ -191,7 +191,7 @@ $operatorsByType = [
                     <?php endforeach; ?>
                 </select>
 
-                <select class="harper-cond-operator" name="cond_operator[]" aria-label="<?php esc_attr_e('Operator', 'wc-order-customer-tagger'); ?>">
+                <select class="cm-cond-operator" name="cond_operator[]" aria-label="<?php esc_attr_e('Operator', 'wc-order-customer-tagger'); ?>">
                     <?php
                     // Output all operators grouped by current type so the selected one is visible
                     $allOpsForType = $operatorsByType[$condType] ?? $operatorsByType['numeric'];
@@ -203,14 +203,14 @@ $operatorsByType = [
                 </select>
 
                 <input type="text"
-                       class="harper-cond-value"
+                       class="cm-cond-value"
                        name="cond_value[]"
                        value="<?php echo esc_attr($condVal); ?>"
                        placeholder="<?php esc_attr_e('value', 'wc-order-customer-tagger'); ?>"
                        aria-label="<?php esc_attr_e('Value', 'wc-order-customer-tagger'); ?>"
                        <?php echo $booleanOp ? 'style="display:none"' : ''; ?>>
 
-                <button type="button" class="button harper-remove-condition"
+                <button type="button" class="button cm-remove-condition"
                         aria-label="<?php esc_attr_e('Remove condition', 'wc-order-customer-tagger'); ?>">
                     &times;
                 </button>
@@ -219,7 +219,7 @@ $operatorsByType = [
         </div>
 
         <p>
-            <button type="button" id="harper-add-condition" class="button button-secondary">
+            <button type="button" id="cm-add-condition" class="button button-secondary">
                 <?php esc_html_e('+ Add Condition', 'wc-order-customer-tagger'); ?>
             </button>
         </p>
@@ -228,5 +228,5 @@ $operatorsByType = [
     </form>
 </div>
 
-<script type="application/json" id="harper-field-type-map"><?php echo $fieldTypeMapJson; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_json_encode output is safe ?></script>
-<script type="application/json" id="harper-operators-by-type"><?php echo $operatorsByTypeJson; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_json_encode output is safe ?></script>
+<script type="application/json" id="cm-field-type-map"><?php echo $fieldTypeMapJson; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_json_encode output is safe ?></script>
+<script type="application/json" id="cm-operators-by-type"><?php echo $operatorsByTypeJson; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_json_encode output is safe ?></script>

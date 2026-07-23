@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\RuleEngine;
+namespace ClarityMomentum\WCTagger\RuleEngine;
 
 if (!defined('ABSPATH')) exit;
 
@@ -71,8 +71,8 @@ class Tagger
         $rows = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT r.id, r.tag_id, r.operator, r.conditions
-                 FROM {$p}harper_tagger_rules r
-                 JOIN {$p}harper_tagger_tags  t ON t.id = r.tag_id
+                 FROM {$p}cm_tagger_rules r
+                 JOIN {$p}cm_tagger_tags  t ON t.id = r.tag_id
                  WHERE r.is_active = 1
                    AND t.type IN (%s, 'both')
                  ORDER BY r.priority ASC, r.id ASC",
@@ -119,7 +119,7 @@ class Tagger
     private function persistOrderTags(int $orderId, array $tagIds): void
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'harper_tagger_order_tags';
+        $table = $wpdb->prefix . 'cm_tagger_order_tags';
 
         foreach ($tagIds as $tagId) {
             $wpdb->query(
@@ -141,7 +141,7 @@ class Tagger
     private function persistCustomerTags(int $customerId, array $tagIds): void
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'harper_tagger_customer_tags';
+        $table = $wpdb->prefix . 'cm_tagger_customer_tags';
 
         foreach ($tagIds as $tagId) {
             $wpdb->query(

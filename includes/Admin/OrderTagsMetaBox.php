@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Admin;
+namespace ClarityMomentum\WCTagger\Admin;
 
 if (!defined('ABSPATH')) exit;
 
@@ -23,7 +23,7 @@ class OrderTagsMetaBox
 
         foreach ($screens as $screen) {
             add_meta_box(
-                'harper_tagger_order_tags',
+                'cm_tagger_order_tags',
                 __('Order Tags', 'wc-order-customer-tagger'),
                 [$this, 'renderMetaBox'],
                 $screen,
@@ -46,10 +46,10 @@ class OrderTagsMetaBox
         }
 
         wp_enqueue_style(
-            'harper-tagger-admin',
-            WC_TAGGER_URL . 'admin/css/tagger-admin.css',
+            'cm-tagger-admin',
+            CM_TAGGER_URL . 'admin/css/tagger-admin.css',
             [],
-            WC_TAGGER_VERSION
+            CM_TAGGER_VERSION
         );
     }
 
@@ -71,7 +71,7 @@ class OrderTagsMetaBox
 
         $tags = $orderId > 0 ? $this->getOrderTags($orderId) : [];
 
-        require WC_TAGGER_DIR . 'admin/views/order-tags-metabox.php';
+        require CM_TAGGER_DIR . 'admin/views/order-tags-metabox.php';
     }
 
     /**
@@ -82,9 +82,10 @@ class OrderTagsMetaBox
     private function getOrderTags(int $orderId): array
     {
         global $wpdb;
-        $otTable   = $wpdb->prefix . 'harper_tagger_order_tags';
-        $tagsTable = $wpdb->prefix . 'harper_tagger_tags';
+        $otTable   = $wpdb->prefix . 'cm_tagger_order_tags';
+        $tagsTable = $wpdb->prefix . 'cm_tagger_tags';
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $rows = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT t.id, t.name, t.color, t.image_url

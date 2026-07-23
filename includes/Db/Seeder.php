@@ -5,13 +5,13 @@
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Db;
+namespace ClarityMomentum\WCTagger\Db;
 
 if (!defined('ABSPATH')) exit;
 
 class Seeder
 {
-    private const SEEDED_OPTION = 'harper_tagger_seeded';
+    private const SEEDED_OPTION = 'cm_tagger_seeded';
 
     public static function maybeRun(): void
     {
@@ -25,8 +25,8 @@ class Seeder
     public static function run(): void
     {
         global $wpdb;
-        $tags  = $wpdb->prefix . 'harper_tagger_tags';
-        $rules = $wpdb->prefix . 'harper_tagger_rules';
+        $tags  = $wpdb->prefix . 'cm_tagger_tags';
+        $rules = $wpdb->prefix . 'cm_tagger_rules';
 
         foreach (self::defaultTags() as $tag) {
             $wpdb->insert($tags, [

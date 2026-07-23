@@ -1,6 +1,6 @@
 <?php
 /**
- * PHPUnit bootstrap for Harper Order & Customer Tagger unit tests.
+ * PHPUnit bootstrap for CM Order & Customer Tagger unit tests.
  * Does NOT load WordPress or WooCommerce — the unit tests provide their own stubs.
  *
  * RuleEngine classes (Condition, Rule, Engine) are pure PHP and need NO stubs.
@@ -121,11 +121,22 @@ if (!function_exists('delete_option')) {
 if (!class_exists('WC_Order')) {
     class WC_Order
     {
-        public function get_total(): float       { return 0.0; }
+        public function get_id(): int                              { return 0; }
+        public function get_total(): float                         { return 0.0; }
         public function get_items(string $type = 'line_item'): array { return []; }
-        public function get_payment_method(): string    { return ''; }
-        public function get_shipping_country(): string  { return ''; }
-        public function get_billing_country(): string   { return ''; }
+        public function get_payment_method(): string               { return ''; }
+        public function get_status(): string                       { return ''; }
+        public function get_shipping_country(): string             { return ''; }
+        public function get_billing_country(): string              { return ''; }
+        public function get_shipping_state(): string               { return ''; }
+        public function get_billing_state(): string                { return ''; }
+        public function get_shipping_postcode(): string            { return ''; }
+        public function get_billing_postcode(): string             { return ''; }
+        public function get_shipping_address_1(): string           { return ''; }
+        public function get_billing_address_1(): string            { return ''; }
+        public function get_customer_id(): int                     { return 0; }
+        public function get_coupon_codes(): array                  { return []; }
+        public function get_user_id(): int                         { return 0; }
     }
 }
 
@@ -135,5 +146,45 @@ if (!class_exists('WC_Customer')) {
         public function get_id(): int            { return 0; }
         public function get_total_spent(): float { return 0.0; }
         public function get_order_count(): int   { return 0; }
+        public function get_date_created(): ?object { return null; }
+    }
+}
+
+if (!class_exists('WC_Order_Item_Product')) {
+    class WC_Order_Item_Product
+    {
+        public function get_quantity(): int        { return 1; }
+        public function get_product(): ?WC_Product { return null; }
+        public function get_method_id(): string    { return ''; }
+        public function get_instance_id(): string  { return ''; }
+    }
+}
+
+if (!class_exists('WC_Product')) {
+    class WC_Product
+    {
+        public function get_id(): int       { return 0; }
+        public function get_sku(): string   { return ''; }
+        public function get_category_ids(): array { return []; }
+    }
+}
+
+if (!function_exists('wc_get_orders')) {
+    function wc_get_orders(array $args = []): array { return []; }
+}
+
+if (!function_exists('get_userdata')) {
+    function get_userdata(int $userId): object|false {
+        return (object) ['user_registered' => '2020-01-01 00:00:00'];
+    }
+}
+if (!function_exists('absint')) {
+    function absint(mixed $maybeint): int { return abs((int) $maybeint); }
+}
+if (!function_exists('selected')) {
+    function selected(mixed $selected, mixed $current = true, bool $echo = true): string {
+        $result = $selected == $current ? ' selected="selected"' : '';
+        if ($echo) echo $result;
+        return $result;
     }
 }

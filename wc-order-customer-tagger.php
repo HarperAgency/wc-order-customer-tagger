@@ -1,58 +1,71 @@
 <?php
 /**
- * Plugin Name:       Harper Order & Customer Tagger
- * Plugin URI:        https://harper.agency
- * Description:       Auto-tag orders and customers using configurable rule-based conditions.
+ * Plugin Name:       CM Order & Customer Tagger
+ * Plugin URI:        https://claritymomentum.io/products/cm-order-customer-tagger/
+ * Description:       Automatically tag WooCommerce orders and customers using flexible, configurable rules. Surface insights in your order and customer lists at a glance.
  * Version:           1.3.0
  * Requires at least: 6.0
  * Requires PHP:      8.1
- * Author:            Harper Agency
- * Author URI:        https://harper.agency
- * License:           MIT
- * License URI:       https://opensource.org/licenses/MIT
+ * Author:            Clarity Momentum
+ * Author URI:        https://claritymomentum.io
+ * License:           GPL-2.0-or-later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       wc-order-customer-tagger
  * Domain Path:       /languages
  * WC requires at least: 7.0
- * WC tested up to:      9.0
+ * WC tested up to:      10.7
  */
 declare(strict_types=1);
 
 if (!defined('ABSPATH')) exit;
 
-define('WC_TAGGER_VERSION', '1.2.0');
-define('WC_TAGGER_FILE',    __FILE__);
-define('WC_TAGGER_DIR',     plugin_dir_path(__FILE__));
-define('WC_TAGGER_URL',     plugin_dir_url(__FILE__));
+define('CM_TAGGER_VERSION', '1.3.0');
+define('CM_TAGGER_FILE',    __FILE__);
+define('CM_TAGGER_DIR',     plugin_dir_path(__FILE__));
+define('CM_TAGGER_URL',     plugin_dir_url(__FILE__));
 
 // ── Autoloader ────────────────────────────────────────────────────────────────
 
-if (file_exists(WC_TAGGER_DIR . 'vendor/autoload.php')) {
-    require_once WC_TAGGER_DIR . 'vendor/autoload.php';
+if (file_exists(CM_TAGGER_DIR . 'vendor/autoload.php')) {
+    require_once CM_TAGGER_DIR . 'vendor/autoload.php';
 } else {
     spl_autoload_register(function (string $class): void {
-        $prefix = 'HarperAgency\\WCTagger\\';
+        $prefix = 'ClarityMomentum\\WCTagger\\';
         if (strncmp($class, $prefix, strlen($prefix)) !== 0) {
             return;
         }
         $relative = str_replace('\\', DIRECTORY_SEPARATOR, substr($class, strlen($prefix)));
-        $file = WC_TAGGER_DIR . 'includes/' . $relative . '.php';
+        $file = CM_TAGGER_DIR . 'includes/' . $relative . '.php';
         if (file_exists($file)) {
             require_once $file;
         }
     });
 }
 
+// ── CM Feed Consumer ──────────────────────────────────────────────────────────
+
+if ( file_exists( CM_TAGGER_DIR . 'lib/cm-feed-consumer/version.php' ) ) {
+    require_once CM_TAGGER_DIR . 'lib/cm-feed-consumer/version.php';
+}
+
 // ── Boot ──────────────────────────────────────────────────────────────────────
+
+register_deactivation_hook(
+    __FILE__,
+    function (): void {
+        wp_clear_scheduled_hook( 'cm_feed_consumer_refresh' );
+    }
+);
 
 register_activation_hook(__FILE__, function (): void {
     try {
-        HarperAgency\WCTagger\Db\Schema::install();
-        HarperAgency\WCTagger\Db\Seeder::maybeRun();
+        ClarityMomentum\WCTagger\Db\Schema::install();
+        ClarityMomentum\WCTagger\Db\Seeder::maybeRun();
     } catch (\Throwable $e) {
         // Surface DB errors as a deactivation message rather than a white screen
         deactivate_plugins(plugin_basename(__FILE__));
         wp_die(
-            esc_html__('Harper Order & Customer Tagger could not be activated: ', 'wc-order-customer-tagger')
+            esc_html__('CM Order & Customer Tagger could not be activated: ', 'wc-order-customer-tagger')
             . esc_html($e->getMessage()),
             esc_html__('Plugin Activation Error', 'wc-order-customer-tagger'),
             ['back_link' => true]
@@ -64,7 +77,7 @@ add_action('plugins_loaded', function (): void {
     if (!wc_tagger_wc_active()) {
         add_action('admin_notices', function (): void {
             echo '<div class="notice notice-error"><p>'
-               . esc_html__('Harper Order & Customer Tagger requires WooCommerce to be installed and active.', 'wc-order-customer-tagger')
+               . esc_html__('CM Order & Customer Tagger requires WooCommerce to be installed and active.', 'wc-order-customer-tagger')
                . '</p></div>';
         });
         return;
@@ -72,31 +85,31 @@ add_action('plugins_loaded', function (): void {
 
     load_plugin_textdomain('wc-order-customer-tagger', false, dirname(plugin_basename(__FILE__)) . '/languages');
 
-    HarperAgency\WCTagger\Db\Schema::maybeUpgrade();
+    ClarityMomentum\WCTagger\Db\Schema::maybeUpgrade();
 
-    $repo      = new HarperAgency\WCTagger\Db\TagRepository();
-    $ruleRepo  = new HarperAgency\WCTagger\Db\RuleRepository();
-    $tagsAdmin = new HarperAgency\WCTagger\Admin\TagsAdmin($repo, $ruleRepo);
+    $repo      = new ClarityMomentum\WCTagger\Db\TagRepository();
+    $ruleRepo  = new ClarityMomentum\WCTagger\Db\RuleRepository();
+    $tagsAdmin = new ClarityMomentum\WCTagger\Admin\TagsAdmin($repo, $ruleRepo);
     $tagsAdmin->register();
 
-    $orderMeta = new HarperAgency\WCTagger\Admin\OrderTagsMetaBox();
+    $orderMeta = new ClarityMomentum\WCTagger\Admin\OrderTagsMetaBox();
     $orderMeta->register();
 
-    $orderColumn = new HarperAgency\WCTagger\Admin\OrderTagsColumn();
+    $orderColumn = new ClarityMomentum\WCTagger\Admin\OrderTagsColumn();
     $orderColumn->register();
 
-    $customerProfile = new HarperAgency\WCTagger\Admin\CustomerTagsProfile();
+    $customerProfile = new ClarityMomentum\WCTagger\Admin\CustomerTagsProfile();
     $customerProfile->register();
 
-    $customerColumn = new HarperAgency\WCTagger\Admin\CustomerTagsColumn();
+    $customerColumn = new ClarityMomentum\WCTagger\Admin\CustomerTagsColumn();
     $customerColumn->register();
 
-    $popover = new HarperAgency\WCTagger\Admin\TagPopover();
+    $popover = new ClarityMomentum\WCTagger\Admin\TagPopover();
     $popover->register();
 
     // ── Grid filters + bulk re-run ────────────────────────────────────────────
-    $tagger      = new HarperAgency\WCTagger\RuleEngine\Tagger();
-    $gridFilters = new HarperAgency\WCTagger\Admin\GridFilters($tagger);
+    $tagger      = new ClarityMomentum\WCTagger\RuleEngine\Tagger();
+    $gridFilters = new ClarityMomentum\WCTagger\Admin\GridFilters($tagger);
     $gridFilters->register();
 
     // ── Rule engine hooks ─────────────────────────────────────────────────────
@@ -113,6 +126,18 @@ add_action('plugins_loaded', function (): void {
             $tagger->tagOrder($order);
         }
     }, 10, 3);
+
+    // ── CM Feed Consumer ─────────────────────────────────────────────────────
+    if ( class_exists( 'CM_Feed_Consumer' ) ) {
+        $cm_consumer = new CM_Feed_Consumer(
+            array(
+                'module'   => 'cm-order-customer-tagger',
+                'platform' => 'woocommerce',
+            )
+        );
+        ( new CM_Feed_Notice( $cm_consumer ) )->init();
+        ( new CM_Feed_Scheduler( $cm_consumer ) )->init();
+    }
 });
 
 // ── HPOS compatibility declaration ───────────────────────────────────────────

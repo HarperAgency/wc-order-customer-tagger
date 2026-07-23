@@ -1,11 +1,11 @@
 <?php
 /**
- * CRUD operations for the harper_tagger_rules table.
+ * CRUD operations for the cm_tagger_rules table.
  * All public methods accept/return plain arrays — no WP objects leak out.
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Db;
+namespace ClarityMomentum\WCTagger\Db;
 
 if (!defined('ABSPATH')) exit;
 
@@ -19,7 +19,7 @@ class RuleRepository
     public function __construct()
     {
         global $wpdb;
-        $this->table = $wpdb->prefix . 'harper_tagger_rules';
+        $this->table = $wpdb->prefix . 'cm_tagger_rules';
     }
 
     /**

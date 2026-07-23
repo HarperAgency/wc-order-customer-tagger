@@ -4,7 +4,7 @@
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Admin;
+namespace ClarityMomentum\WCTagger\Admin;
 
 if (!defined('ABSPATH')) exit;
 
@@ -19,7 +19,7 @@ class CustomerTagsColumn
 
     public function addColumn(array $columns): array
     {
-        $columns['harper_customer_tags'] = __('Tags', 'wc-order-customer-tagger');
+        $columns['cm_customer_tags'] = __('Tags', 'wc-order-customer-tagger');
         return $columns;
     }
 
@@ -30,31 +30,31 @@ class CustomerTagsColumn
      */
     public function renderColumn(string $output, string $column, int $userId): string
     {
-        if ($column !== 'harper_customer_tags') return $output;
+        if ($column !== 'cm_customer_tags') return $output;
 
         $tags = $this->getCustomerTags($userId);
 
         $html = sprintf(
-            '<div class="harper-tagger-cell" data-type="customer" data-id="%d" title="%s">',
+            '<div class="cm-tagger-cell" data-type="customer" data-id="%d" title="%s">',
             $userId,
             esc_attr__('Click to edit tags', 'wc-order-customer-tagger')
         );
 
         if (empty($tags)) {
-            $html .= '<span class="harper-tagger-no-tags">—</span>';
+            $html .= '<span class="cm-tagger-no-tags">—</span>';
         } else {
-            $html .= '<div class="harper-tagger-column-tags">';
+            $html .= '<div class="cm-tagger-column-tags">';
             foreach ($tags as $tag) {
                 if (!empty($tag['image_url'])) {
                     $html .= sprintf(
-                        '<img src="%s" alt="%s" title="%s" class="harper-tagger-icon-preview">',
+                        '<img src="%s" alt="%s" title="%s" class="cm-tagger-icon-preview">',
                         esc_url($tag['image_url']),
                         esc_attr($tag['name']),
                         esc_attr($tag['name'])
                     );
                 } else {
                     $html .= sprintf(
-                        '<span class="harper-tagger-badge" style="background:%s" title="%s">%s</span>',
+                        '<span class="cm-tagger-badge" style="background:%s" title="%s">%s</span>',
                         esc_attr($tag['color']),
                         esc_attr($tag['name']),
                         esc_html($tag['name'])
@@ -73,19 +73,20 @@ class CustomerTagsColumn
         if ($hook !== 'users.php') return;
 
         wp_enqueue_style(
-            'harper-tagger-admin',
-            WC_TAGGER_URL . 'admin/css/tagger-admin.css',
+            'cm-tagger-admin',
+            CM_TAGGER_URL . 'admin/css/tagger-admin.css',
             [],
-            WC_TAGGER_VERSION
+            CM_TAGGER_VERSION
         );
     }
 
     private function getCustomerTags(int $customerId): array
     {
         global $wpdb;
-        $ctTable   = $wpdb->prefix . 'harper_tagger_customer_tags';
-        $tagsTable = $wpdb->prefix . 'harper_tagger_tags';
+        $ctTable   = $wpdb->prefix . 'cm_tagger_customer_tags';
+        $tagsTable = $wpdb->prefix . 'cm_tagger_tags';
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         return $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT t.id, t.name, t.color, t.image_url

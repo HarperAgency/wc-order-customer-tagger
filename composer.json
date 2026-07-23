@@ -1,8 +1,14 @@
 {
-    "name": "harperagency/wc-order-customer-tagger",
-    "description": "Auto-tag WooCommerce orders and customers using configurable rule-based conditions.",
+    "name": "claritymomentum/cm-order-customer-tagger",
+    "description": "Automatically tag WooCommerce orders and customers using configurable rule-based conditions.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Clarity Momentum",
+            "homepage": "https://claritymomentum.io"
+        }
+    ],
     "require": {
         "php": ">=8.1",
         "harperagency/rule-engine": "@dev"
@@ -12,12 +18,12 @@
     },
     "autoload": {
         "psr-4": {
-            "HarperAgency\\WCTagger\\": "includes/"
+            "ClarityMomentum\\WCTagger\\": "includes/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HarperAgency\\WCTagger\\Tests\\": "tests/"
+            "ClarityMomentum\\WCTagger\\Tests\\": "tests/"
         }
     },
     "scripts": {

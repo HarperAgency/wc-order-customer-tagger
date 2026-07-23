@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\RuleEngine;
+namespace ClarityMomentum\WCTagger\RuleEngine;
 
 if (!defined('ABSPATH')) exit;
 

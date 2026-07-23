@@ -4,13 +4,13 @@
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Db;
+namespace ClarityMomentum\WCTagger\Db;
 
 if (!defined('ABSPATH')) exit;
 
 class Schema
 {
-    private const VERSION_OPTION = 'harper_tagger_db_version';
+    private const VERSION_OPTION = 'cm_tagger_db_version';
     public  const DB_VERSION     = '1.0';
 
     public static function install(): void
@@ -20,7 +20,7 @@ class Schema
         $p = $wpdb->prefix;
 
         $sql = "
-        CREATE TABLE {$p}harper_tagger_tags (
+        CREATE TABLE {$p}cm_tagger_tags (
             id         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             name       VARCHAR(100)        NOT NULL,
             slug       VARCHAR(100)        NOT NULL,
@@ -32,7 +32,7 @@ class Schema
             UNIQUE KEY slug (slug)
         ) {$c};
 
-        CREATE TABLE {$p}harper_tagger_rules (
+        CREATE TABLE {$p}cm_tagger_rules (
             id         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             tag_id     BIGINT(20) UNSIGNED NOT NULL,
             label      VARCHAR(100)        NOT NULL DEFAULT '',
@@ -47,7 +47,7 @@ class Schema
             KEY is_active_trigger (is_active, rule_trigger)
         ) {$c};
 
-        CREATE TABLE {$p}harper_tagger_order_tags (
+        CREATE TABLE {$p}cm_tagger_order_tags (
             id         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             order_id   BIGINT(20) UNSIGNED NOT NULL,
             tag_id     BIGINT(20) UNSIGNED NOT NULL,
@@ -58,7 +58,7 @@ class Schema
             KEY tag_id (tag_id)
         ) {$c};
 
-        CREATE TABLE {$p}harper_tagger_customer_tags (
+        CREATE TABLE {$p}cm_tagger_customer_tags (
             id          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             customer_id BIGINT(20) UNSIGNED NOT NULL,
             tag_id      BIGINT(20) UNSIGNED NOT NULL,
@@ -86,8 +86,8 @@ class Schema
     {
         global $wpdb;
         $p = $wpdb->prefix;
-        foreach (['harper_tagger_customer_tags', 'harper_tagger_order_tags',
-                  'harper_tagger_rules', 'harper_tagger_tags'] as $table) {
+        foreach (['cm_tagger_customer_tags', 'cm_tagger_order_tags',
+                  'cm_tagger_rules', 'cm_tagger_tags'] as $table) {
             // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
             $wpdb->query("DROP TABLE IF EXISTS {$p}{$table}");
         }

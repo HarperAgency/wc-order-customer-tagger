@@ -1,6 +1,6 @@
-/* Harper Tagger — admin styles */
+/* CM Tagger — admin styles */
 
-.harper-tagger-badge {
+.cm-tagger-badge {
     display: inline-block;
     padding: 2px 8px;
     border-radius: 3px;
@@ -12,35 +12,35 @@
     white-space: nowrap;
 }
 
-.harper-tagger-icon-preview {
+.cm-tagger-icon-preview {
     max-width: 24px;
     max-height: 24px;
     vertical-align: middle;
 }
 
-.harper-tagger-icon-preview-wrap {
+.cm-tagger-icon-preview-wrap {
     margin-top: 6px;
 }
 
-.harper-tagger-list .column-badge {
+.cm-tagger-list .column-badge {
     width: 120px;
 }
 
-.harper-tagger-delete-link {
+.cm-tagger-delete-link {
     color: #b32d2e;
 }
-.harper-tagger-delete-link:hover {
+.cm-tagger-delete-link:hover {
     color: #dc3232;
 }
 
 /* Live badge preview on edit page */
-#harper-badge-preview {
+#cm-badge-preview {
     font-size: 13px;
     padding: 3px 10px;
 }
 
 /* Tag/Rule edit: subtitle next to heading */
-.harper-tagger-subtitle {
+.cm-tagger-subtitle {
     font-size: 14px;
     font-weight: 400;
     color: #646970;
@@ -49,11 +49,11 @@
 
 /* ── Rule condition builder ─────────────────────────────────────────────── */
 
-#harper-conditions-wrapper {
+#cm-conditions-wrapper {
     margin: 12px 0;
 }
 
-.harper-condition-row {
+.cm-condition-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -65,22 +65,22 @@
     border-radius: 4px;
 }
 
-.harper-condition-row .harper-cond-field {
+.cm-condition-row .cm-cond-field {
     min-width: 200px;
     flex: 0 0 auto;
 }
 
-.harper-condition-row .harper-cond-operator {
+.cm-condition-row .cm-cond-operator {
     min-width: 170px;
     flex: 0 0 auto;
 }
 
-.harper-condition-row .harper-cond-value {
+.cm-condition-row .cm-cond-value {
     flex: 1 1 180px;
     min-width: 120px;
 }
 
-.harper-condition-row .harper-remove-condition {
+.cm-condition-row .cm-remove-condition {
     flex: 0 0 auto;
     color: #b32d2e;
     border-color: #b32d2e;
@@ -90,46 +90,46 @@
     cursor: pointer;
 }
 
-.harper-condition-row .harper-remove-condition:hover {
+.cm-condition-row .cm-remove-condition:hover {
     background: #b32d2e;
     color: #fff;
 }
 
-#harper-add-condition {
+#cm-add-condition {
     margin-top: 4px;
 }
 
 /* ── Tag display meta boxes & profile section ──────────────────────────── */
 
-.harper-tagger-metabox-tags {
+.cm-tagger-metabox-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
     padding: 4px 0;
 }
 
-.harper-tagger-no-tags {
+.cm-tagger-no-tags {
     color: #646970;
     font-style: italic;
 }
 
-.harper-tagger-profile-section {
+.cm-tagger-profile-section {
     margin-top: 20px;
 }
 
-.harper-tagger-profile-section h2 {
+.cm-tagger-profile-section h2 {
     font-size: 1.3em;
     padding: 9px 0;
     border-top: 1px solid #dcdcde;
 }
 
-.harper-tagger-profile-section .harper-tagger-metabox-tags {
+.cm-tagger-profile-section .cm-tagger-metabox-tags {
     margin-top: 6px;
 }
 
 /* ── List table columns (orders + customers) ───────────────────────────── */
 
-.harper-tagger-column-tags {
+.cm-tagger-column-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 3px;
@@ -137,19 +137,19 @@
 }
 
 /* Keep the Tags column from getting too wide in the grid */
-.column-harper_tags,
-.column-harper_customer_tags {
+.column-cm_tags,
+.column-cm_customer_tags {
     width: 160px;
 }
 
-.harper-tagger-column-tags .harper-tagger-badge {
+.cm-tagger-column-tags .cm-tagger-badge {
     font-size: 10px;
     padding: 1px 6px;
 }
 
 /* ── Clickable cell wrapper ────────────────────────────────────────────── */
 
-.harper-tagger-cell {
+.cm-tagger-cell {
     cursor: pointer;
     display: inline-block;
     min-width: 24px;
@@ -159,14 +159,14 @@
     transition: background 0.15s;
 }
 
-.harper-tagger-cell:hover {
+.cm-tagger-cell:hover {
     background: #f0f0f1;
     outline: 1px dashed #c3c4c7;
 }
 
 /* ── Popover container ─────────────────────────────────────────────────── */
 
-#harper-tag-popover {
+#cm-tag-popover {
     display: none;
     position: absolute;
     z-index: 99999;

@@ -4,10 +4,10 @@
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Tests\Unit\Admin;
+namespace ClarityMomentum\WCTagger\Tests\Unit\Admin;
 
 use PHPUnit\Framework\TestCase;
-use HarperAgency\WCTagger\Admin\OrderTagsColumn;
+use ClarityMomentum\WCTagger\Admin\OrderTagsColumn;
 
 class OrderTagsColumnTest extends TestCase
 {
@@ -20,16 +20,16 @@ class OrderTagsColumnTest extends TestCase
 
     // ── addColumn ─────────────────────────────────────────────────────────────
 
-    public function testAddsHarperTagsKey(): void
+    public function testAddsCmTagsKey(): void
     {
         $result = $this->col->addColumn(['order_status' => 'Status', 'order_total' => 'Total']);
-        $this->assertArrayHasKey('harper_tags', $result);
+        $this->assertArrayHasKey('cm_tags', $result);
     }
 
     public function testColumnLabelIsCorrect(): void
     {
         $result = $this->col->addColumn(['order_status' => 'Status']);
-        $this->assertSame('Tags', $result['harper_tags']);
+        $this->assertSame('Tags', $result['cm_tags']);
     }
 
     public function testColumnInsertedAfterOrderStatus(): void
@@ -41,7 +41,7 @@ class OrderTagsColumnTest extends TestCase
         ]);
         $keys = array_keys($result);
         $statusPos = array_search('order_status', $keys, true);
-        $tagsPos   = array_search('harper_tags', $keys, true);
+        $tagsPos   = array_search('cm_tags', $keys, true);
         $this->assertSame($statusPos + 1, $tagsPos,
             'Tags column should immediately follow order_status');
     }
@@ -50,7 +50,7 @@ class OrderTagsColumnTest extends TestCase
     {
         // Fallback: if order_status is not in columns, Tags is still appended
         $result = $this->col->addColumn(['order_number' => 'Order', 'order_total' => 'Total']);
-        $this->assertArrayHasKey('harper_tags', $result);
+        $this->assertArrayHasKey('cm_tags', $result);
     }
 
     public function testExistingColumnsPreserved(): void
@@ -73,7 +73,7 @@ class OrderTagsColumnTest extends TestCase
         ob_start();
         $this->col->renderColumn('order_total', $order);
         $output = ob_get_clean();
-        $this->assertSame('', $output, 'Non-harper_tags columns should produce no output');
+        $this->assertSame('', $output, 'Non-cm_tags columns should produce no output');
     }
 
     public function testRenderColumnHasClickableWrapper(): void
@@ -83,9 +83,9 @@ class OrderTagsColumnTest extends TestCase
 
         $order = $this->makeOrder(42);
         ob_start();
-        $this->col->renderColumn('harper_tags', $order);
+        $this->col->renderColumn('cm_tags', $order);
         $output = ob_get_clean();
-        $this->assertStringContainsString('harper-tagger-cell', $output);
+        $this->assertStringContainsString('cm-tagger-cell', $output);
         $this->assertStringContainsString('data-type="order"', $output);
         $this->assertStringContainsString('data-id="42"', $output);
     }
@@ -97,7 +97,7 @@ class OrderTagsColumnTest extends TestCase
 
         $order = $this->makeOrder(42);
         ob_start();
-        $this->col->renderColumn('harper_tags', $order);
+        $this->col->renderColumn('cm_tags', $order);
         $output = ob_get_clean();
         $this->assertStringContainsString('—', $output);
     }
@@ -111,11 +111,11 @@ class OrderTagsColumnTest extends TestCase
 
         $order = $this->makeOrder(5);
         ob_start();
-        $this->col->renderColumn('harper_tags', $order);
+        $this->col->renderColumn('cm_tags', $order);
         $output = ob_get_clean();
         $this->assertStringContainsString('high-value', $output);
         $this->assertStringContainsString('#e74c3c', $output);
-        $this->assertStringContainsString('harper-tagger-badge', $output);
+        $this->assertStringContainsString('cm-tagger-badge', $output);
     }
 
     public function testRenderColumnShowsImgForIconTag(): void
@@ -127,11 +127,11 @@ class OrderTagsColumnTest extends TestCase
 
         $order = $this->makeOrder(6);
         ob_start();
-        $this->col->renderColumn('harper_tags', $order);
+        $this->col->renderColumn('cm_tags', $order);
         $output = ob_get_clean();
         $this->assertStringContainsString('<img', $output);
         $this->assertStringContainsString('star.png', $output);
-        $this->assertStringNotContainsString('harper-tagger-badge', $output);
+        $this->assertStringNotContainsString('cm-tagger-badge', $output);
     }
 
     public function testRenderColumnShowsMultipleTags(): void
@@ -144,7 +144,7 @@ class OrderTagsColumnTest extends TestCase
 
         $order = $this->makeOrder(7);
         ob_start();
-        $this->col->renderColumn('harper_tags', $order);
+        $this->col->renderColumn('cm_tags', $order);
         $output = ob_get_clean();
         $this->assertStringContainsString('high-value', $output);
         $this->assertStringContainsString('repeat', $output);
@@ -169,9 +169,9 @@ class OrderTagsColumnTest extends TestCase
         $wpdb = $this->makeWpdb([]);
 
         ob_start();
-        $this->col->renderLegacyColumn('harper_tags', 99);
+        $this->col->renderLegacyColumn('cm_tags', 99);
         $output = ob_get_clean();
-        $this->assertStringContainsString('harper-tagger-cell', $output);
+        $this->assertStringContainsString('cm-tagger-cell', $output);
         $this->assertStringContainsString('data-type="order"', $output);
         $this->assertStringContainsString('data-id="99"', $output);
     }
@@ -182,7 +182,7 @@ class OrderTagsColumnTest extends TestCase
         $wpdb = $this->makeWpdb([]);
 
         ob_start();
-        $this->col->renderLegacyColumn('harper_tags', 99);
+        $this->col->renderLegacyColumn('cm_tags', 99);
         $output = ob_get_clean();
         $this->assertStringContainsString('—', $output);
     }
@@ -195,7 +195,7 @@ class OrderTagsColumnTest extends TestCase
         ]);
 
         ob_start();
-        $this->col->renderLegacyColumn('harper_tags', 10);
+        $this->col->renderLegacyColumn('cm_tags', 10);
         $output = ob_get_clean();
         $this->assertStringContainsString('rush', $output);
     }

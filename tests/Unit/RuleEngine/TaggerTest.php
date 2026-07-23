@@ -4,10 +4,10 @@
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Tests\Unit\RuleEngine;
+namespace ClarityMomentum\WCTagger\Tests\Unit\RuleEngine;
 
 use PHPUnit\Framework\TestCase;
-use HarperAgency\WCTagger\RuleEngine\Tagger;
+use ClarityMomentum\WCTagger\RuleEngine\Tagger;
 
 class TaggerTest extends TestCase
 {

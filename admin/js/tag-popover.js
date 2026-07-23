@@ -1,5 +1,5 @@
 /**
- * Harper Tagger — inline tag editing popover for Orders and Customers grids.
+ * CM Tagger — inline tag editing popover for Orders and Customers grids.
  *
  * Click any Tags cell → popover opens showing applied tags (with × remove)
  * and available tags to add. All changes are saved via AJAX immediately.
@@ -7,7 +7,7 @@
 (function ($) {
     'use strict';
 
-    var cfg         = window.harperTaggerPopover || {};
+    var cfg         = window.cmTaggerPopover || {};
     var ajaxUrl     = cfg.ajaxUrl  || '';
     var nonce       = cfg.nonce    || '';
     var i18n        = cfg.i18n    || {};
@@ -29,7 +29,7 @@
 
     function buildPopover() {
         $popover = $(
-            '<div id="harper-tag-popover" role="dialog" aria-modal="true">' +
+            '<div id="cm-tag-popover" role="dialog" aria-modal="true">' +
                 '<div class="htp-header">' +
                     '<span class="htp-title"></span>' +
                     '<button class="htp-close" aria-label="Close">&times;</button>' +
@@ -67,7 +67,7 @@
 
     function bindCellClicks() {
         // Delegate from body — works for dynamically loaded rows (HPOS infinite scroll)
-        $(document).on('click', '.harper-tagger-cell', function (e) {
+        $(document).on('click', '.cm-tagger-cell', function (e) {
             e.stopPropagation();
 
             var $cell = $(this);
@@ -85,7 +85,7 @@
             ctx = { type: type, id: id, $cell: $cell };
 
             if (allTags === null) {
-                $.post(ajaxUrl, { action: 'harper_tagger_get_all_tags', nonce: nonce })
+                $.post(ajaxUrl, { action: 'cm_tagger_get_all_tags', nonce: nonce })
                     .done(function (resp) {
                         // Always set allTags (even empty) so subsequent opens skip AJAX
                         allTags = (resp.success && resp.data && resp.data.tags)
@@ -161,7 +161,7 @@
             );
         } else {
             $wrap.append(
-                $('<span class="harper-tagger-badge htp-badge-label">')
+                $('<span class="cm-tagger-badge htp-badge-label">')
                     .css('background', tag.color)
                     .text(tag.name)
             );
@@ -186,7 +186,7 @@
                 .attr('data-tag-id', tag.id)
                 .css('cursor', 'pointer');
         }
-        return $('<span class="harper-tagger-badge htp-add-badge">')
+        return $('<span class="cm-tagger-badge htp-add-badge">')
             .css('background', tag.color)
             .css('cursor', 'pointer')
             .attr('title', 'Add: ' + tag.name)
@@ -202,7 +202,7 @@
         setStatus(i18n.saving || 'Saving…');
 
         $.post(ajaxUrl, {
-            action:    'harper_tagger_' + action + '_tag',
+            action:    'cm_tagger_' + action + '_tag',
             nonce:     nonce,
             type:      ctx.type,
             object_id: ctx.id,
@@ -229,19 +229,19 @@
         var $cell = ctx.$cell;
 
         if (!tags || tags.length === 0) {
-            $cell.html('<span class="harper-tagger-no-tags">—</span>');
+            $cell.html('<span class="cm-tagger-no-tags">—</span>');
             return;
         }
 
-        var html = '<div class="harper-tagger-column-tags">';
+        var html = '<div class="cm-tagger-column-tags">';
         tags.forEach(function (tag) {
             if (tag.image_url) {
                 html += '<img src="' + escAttr(tag.image_url) + '"'
                       + ' alt="' + escAttr(tag.name) + '"'
                       + ' title="' + escAttr(tag.name) + '"'
-                      + ' class="harper-tagger-icon-preview">';
+                      + ' class="cm-tagger-icon-preview">';
             } else {
-                html += '<span class="harper-tagger-badge"'
+                html += '<span class="cm-tagger-badge"'
                       + ' style="background:' + escAttr(tag.color) + '"'
                       + ' title="' + escAttr(tag.name) + '">'
                       + escHtml(tag.name)
@@ -265,10 +265,10 @@
 
         // Collect names from rendered badges and icon alts
         var names = [];
-        $cell.find('.harper-tagger-badge').each(function () {
+        $cell.find('.cm-tagger-badge').each(function () {
             names.push($(this).text().trim());
         });
-        $cell.find('img.harper-tagger-icon-preview').each(function () {
+        $cell.find('img.cm-tagger-icon-preview').each(function () {
             names.push($(this).attr('alt') || '');
         });
 

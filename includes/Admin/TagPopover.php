@@ -7,22 +7,22 @@
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Admin;
+namespace ClarityMomentum\WCTagger\Admin;
 
 if (!defined('ABSPATH')) exit;
 
 class TagPopover
 {
-    private const NONCE_ACTION = 'harper_tagger_popover';
+    private const NONCE_ACTION = 'cm_tagger_popover';
 
     public function register(): void
     {
         add_action('admin_enqueue_scripts', [$this, 'enqueueAssets']);
 
         // AJAX — logged-in admin users only (no nopriv)
-        add_action('wp_ajax_harper_tagger_get_all_tags',  [$this, 'ajaxGetAllTags']);
-        add_action('wp_ajax_harper_tagger_add_tag',       [$this, 'ajaxAddTag']);
-        add_action('wp_ajax_harper_tagger_remove_tag',    [$this, 'ajaxRemoveTag']);
+        add_action('wp_ajax_cm_tagger_get_all_tags',  [$this, 'ajaxGetAllTags']);
+        add_action('wp_ajax_cm_tagger_add_tag',       [$this, 'ajaxAddTag']);
+        add_action('wp_ajax_cm_tagger_remove_tag',    [$this, 'ajaxRemoveTag']);
     }
 
     public function enqueueAssets(string $hook): void
@@ -31,21 +31,21 @@ class TagPopover
         if (!in_array($hook, $screens, true)) return;
 
         wp_enqueue_style(
-            'harper-tagger-admin',
-            WC_TAGGER_URL . 'admin/css/tagger-admin.css',
+            'cm-tagger-admin',
+            CM_TAGGER_URL . 'admin/css/tagger-admin.css',
             [],
-            WC_TAGGER_VERSION
+            CM_TAGGER_VERSION
         );
 
         wp_enqueue_script(
-            'harper-tag-popover',
-            WC_TAGGER_URL . 'admin/js/tag-popover.js',
+            'cm-tag-popover',
+            CM_TAGGER_URL . 'admin/js/tag-popover.js',
             ['jquery'],
-            WC_TAGGER_VERSION,
+            CM_TAGGER_VERSION,
             true
         );
 
-        wp_localize_script('harper-tag-popover', 'harperTaggerPopover', [
+        wp_localize_script('cm-tag-popover', 'cmTaggerPopover', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce'   => wp_create_nonce(self::NONCE_ACTION),
             'i18n'    => [
@@ -66,11 +66,9 @@ class TagPopover
         $this->verifyRequest();
 
         global $wpdb;
-        $tagsTable = $wpdb->prefix . 'harper_tagger_tags';
-        $tags = $wpdb->get_results(
-            $wpdb->prepare('SELECT id, name, color, image_url FROM `%i` ORDER BY name ASC', $tagsTable),
-            ARRAY_A
-        ) ?: [];
+        $tagsTable = $wpdb->prefix . 'cm_tagger_tags';
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $tags = $wpdb->get_results( "SELECT id, name, color, image_url FROM `{$tagsTable}` ORDER BY name ASC", ARRAY_A ) ?: [];
 
         wp_send_json_success(['tags' => $tags]);
     }
@@ -91,8 +89,8 @@ class TagPopover
 
         global $wpdb;
         $table = $type === 'order'
-            ? $wpdb->prefix . 'harper_tagger_order_tags'
-            : $wpdb->prefix . 'harper_tagger_customer_tags';
+            ? $wpdb->prefix . 'cm_tagger_order_tags'
+            : $wpdb->prefix . 'cm_tagger_customer_tags';
 
         $col = $type === 'order' ? 'order_id' : 'customer_id';
 
@@ -124,8 +122,8 @@ class TagPopover
 
         global $wpdb;
         $table = $type === 'order'
-            ? $wpdb->prefix . 'harper_tagger_order_tags'
-            : $wpdb->prefix . 'harper_tagger_customer_tags';
+            ? $wpdb->prefix . 'cm_tagger_order_tags'
+            : $wpdb->prefix . 'cm_tagger_customer_tags';
 
         $col = $type === 'order' ? 'order_id' : 'customer_id';
 
@@ -152,12 +150,13 @@ class TagPopover
         global $wpdb;
 
         $joinTable = $type === 'order'
-            ? $wpdb->prefix . 'harper_tagger_order_tags'
-            : $wpdb->prefix . 'harper_tagger_customer_tags';
+            ? $wpdb->prefix . 'cm_tagger_order_tags'
+            : $wpdb->prefix . 'cm_tagger_customer_tags';
 
         $joinCol   = $type === 'order' ? 'order_id' : 'customer_id';
-        $tagsTable = $wpdb->prefix . 'harper_tagger_tags';
+        $tagsTable = $wpdb->prefix . 'cm_tagger_tags';
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         return $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT t.id, t.name, t.color, t.image_url

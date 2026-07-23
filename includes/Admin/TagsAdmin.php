@@ -5,10 +5,10 @@
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Admin;
+namespace ClarityMomentum\WCTagger\Admin;
 
-use HarperAgency\WCTagger\Db\TagRepository;
-use HarperAgency\WCTagger\Db\RuleRepository;
+use ClarityMomentum\WCTagger\Db\TagRepository;
+use ClarityMomentum\WCTagger\Db\RuleRepository;
 
 if (!defined('ABSPATH')) exit;
 
@@ -36,30 +36,30 @@ class TagsAdmin
             __('Order & Customer Tags', 'wc-order-customer-tagger'),
             __('Order & Cust. Tags', 'wc-order-customer-tagger'),
             'manage_woocommerce',
-            'harper-tagger-tags',
+            'cm-tagger-tags',
             [$this, 'dispatch']
         );
     }
 
     public function enqueueAssets(string $hook): void
     {
-        if ($hook !== 'woocommerce_page_harper-tagger-tags') {
+        if ($hook !== 'woocommerce_page_cm-tagger-tags') {
             return;
         }
         wp_enqueue_style(
-            'harper-tagger-admin',
-            WC_TAGGER_URL . 'admin/css/tagger-admin.css',
+            'cm-tagger-admin',
+            CM_TAGGER_URL . 'admin/css/tagger-admin.css',
             [],
-            WC_TAGGER_VERSION
+            CM_TAGGER_VERSION
         );
         // WP colour picker
         wp_enqueue_style('wp-color-picker');
         wp_enqueue_script('wp-color-picker');
         wp_enqueue_script(
-            'harper-tagger-admin',
-            WC_TAGGER_URL . 'admin/js/tagger-admin.js',
+            'cm-tagger-admin',
+            CM_TAGGER_URL . 'admin/js/tagger-admin.js',
             ['wp-color-picker'],
-            WC_TAGGER_VERSION,
+            CM_TAGGER_VERSION,
             true
         );
     }
@@ -99,7 +99,7 @@ class TagsAdmin
         unset($tag);
 
         $notice = $this->popNotice();
-        require WC_TAGGER_DIR . 'admin/views/tags-list.php';
+        require CM_TAGGER_DIR . 'admin/views/tags-list.php';
     }
 
     // ── Tag edit / add page ───────────────────────────────────────────────────
@@ -115,14 +115,14 @@ class TagsAdmin
         $rules  = $id ? $this->ruleRepo->findByTagId($id) : [];
         $errors = $this->getErrors();
         $posted = $this->getPosted();           // repopulate form after validation failure
-        require WC_TAGGER_DIR . 'admin/views/tags-edit.php';
+        require CM_TAGGER_DIR . 'admin/views/tags-edit.php';
     }
 
     // ── Tag save handler ──────────────────────────────────────────────────────
 
     private function handleSave(): void
     {
-        check_admin_referer('harper_tagger_save_tag');
+        check_admin_referer('cm_tagger_save_tag');
 
         $id    = (int) ($_POST['tag_id'] ?? 0);
         $name  = trim(sanitize_text_field($_POST['name'] ?? ''));
@@ -166,7 +166,7 @@ class TagsAdmin
         }
 
         wp_safe_redirect(add_query_arg([
-            'page'   => 'harper-tagger-tags',
+            'page'   => 'cm-tagger-tags',
             'action' => 'edit',
             'id'     => $id,
         ], admin_url('admin.php')));
@@ -177,14 +177,14 @@ class TagsAdmin
 
     private function handleDelete(int $id): void
     {
-        check_admin_referer('harper_tagger_delete_tag_' . $id);
+        check_admin_referer('cm_tagger_delete_tag_' . $id);
 
         if ($id > 0) {
             $this->repo->delete($id);
         }
 
         $this->stashNotice(__('Tag deleted.', 'wc-order-customer-tagger'), 'updated');
-        wp_safe_redirect(add_query_arg(['page' => 'harper-tagger-tags'], admin_url('admin.php')));
+        wp_safe_redirect(add_query_arg(['page' => 'cm-tagger-tags'], admin_url('admin.php')));
         exit;
     }
 
@@ -200,7 +200,7 @@ class TagsAdmin
 
         $rules  = $this->ruleRepo->findByTagId($tagId);
         $notice = $this->popNotice();
-        require WC_TAGGER_DIR . 'admin/views/rules-list.php';
+        require CM_TAGGER_DIR . 'admin/views/rules-list.php';
     }
 
     // ── Rule edit / add page ──────────────────────────────────────────────────
@@ -216,14 +216,14 @@ class TagsAdmin
         $rule   = $ruleId ? $this->ruleRepo->findById($ruleId) : null;
         $errors = $this->getErrors();
         $posted = $this->getPosted();
-        require WC_TAGGER_DIR . 'admin/views/rules-edit.php';
+        require CM_TAGGER_DIR . 'admin/views/rules-edit.php';
     }
 
     // ── Rule save handler ─────────────────────────────────────────────────────
 
     private function handleRuleSave(): void
     {
-        check_admin_referer('harper_tagger_save_rule');
+        check_admin_referer('cm_tagger_save_rule');
 
         $ruleId  = (int) ($_POST['rule_id'] ?? 0);
         $tagId   = (int) ($_POST['tag_id'] ?? 0);
@@ -261,8 +261,8 @@ class TagsAdmin
             $this->stashErrors($errors);
             $this->stashPosted(compact('label', 'trigger', 'op', 'priority', 'isActive', 'conditionsRaw'));
             $redirect = $ruleId
-                ? add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'rule-edit', 'tag_id' => $tagId, 'id' => $ruleId], admin_url('admin.php'))
-                : add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'rule-add',  'tag_id' => $tagId], admin_url('admin.php'));
+                ? add_query_arg(['page' => 'cm-tagger-tags', 'action' => 'rule-edit', 'tag_id' => $tagId, 'id' => $ruleId], admin_url('admin.php'))
+                : add_query_arg(['page' => 'cm-tagger-tags', 'action' => 'rule-add',  'tag_id' => $tagId], admin_url('admin.php'));
             wp_safe_redirect($redirect);
             exit;
         }
@@ -288,7 +288,7 @@ class TagsAdmin
         }
 
         wp_safe_redirect(add_query_arg([
-            'page'   => 'harper-tagger-tags',
+            'page'   => 'cm-tagger-tags',
             'action' => 'rules',
             'tag_id' => $tagId,
         ], admin_url('admin.php')));
@@ -300,7 +300,7 @@ class TagsAdmin
     private function handleRuleDelete(int $id): void
     {
         $tagId = (int) ($_GET['tag_id'] ?? 0);
-        check_admin_referer('harper_tagger_delete_rule_' . $id);
+        check_admin_referer('cm_tagger_delete_rule_' . $id);
 
         if ($id > 0) {
             $this->ruleRepo->delete($id);
@@ -308,7 +308,7 @@ class TagsAdmin
 
         $this->stashNotice(__('Rule deleted.', 'wc-order-customer-tagger'), 'updated');
         wp_safe_redirect(add_query_arg([
-            'page'   => 'harper-tagger-tags',
+            'page'   => 'cm-tagger-tags',
             'action' => 'rules',
             'tag_id' => $tagId,
         ], admin_url('admin.php')));
@@ -319,12 +319,12 @@ class TagsAdmin
 
     private function stashNotice(string $message, string $type): void
     {
-        set_transient('harper_tagger_notice_' . get_current_user_id(), compact('message', 'type'), 60);
+        set_transient('cm_tagger_notice_' . get_current_user_id(), compact('message', 'type'), 60);
     }
 
     private function popNotice(): ?array
     {
-        $key    = 'harper_tagger_notice_' . get_current_user_id();
+        $key    = 'cm_tagger_notice_' . get_current_user_id();
         $notice = get_transient($key);
         delete_transient($key);
         return $notice ?: null;
@@ -332,12 +332,12 @@ class TagsAdmin
 
     private function stashErrors(array $errors): void
     {
-        set_transient('harper_tagger_errors_' . get_current_user_id(), $errors, 60);
+        set_transient('cm_tagger_errors_' . get_current_user_id(), $errors, 60);
     }
 
     private function getErrors(): array
     {
-        $key    = 'harper_tagger_errors_' . get_current_user_id();
+        $key    = 'cm_tagger_errors_' . get_current_user_id();
         $errors = get_transient($key);
         delete_transient($key);
         return $errors ?: [];
@@ -345,12 +345,12 @@ class TagsAdmin
 
     private function stashPosted(array $data): void
     {
-        set_transient('harper_tagger_posted_' . get_current_user_id(), $data, 60);
+        set_transient('cm_tagger_posted_' . get_current_user_id(), $data, 60);
     }
 
     private function getPosted(): array
     {
-        $key    = 'harper_tagger_posted_' . get_current_user_id();
+        $key    = 'cm_tagger_posted_' . get_current_user_id();
         $posted = get_transient($key);
         delete_transient($key);
         return $posted ?: [];

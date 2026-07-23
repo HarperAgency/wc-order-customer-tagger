@@ -8,10 +8,10 @@
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Tests\Unit\Admin;
+namespace ClarityMomentum\WCTagger\Tests\Unit\Admin;
 
 use PHPUnit\Framework\TestCase;
-use HarperAgency\WCTagger\Admin\TagPopover;
+use ClarityMomentum\WCTagger\Admin\TagPopover;
 
 class TagPopoverTest extends TestCase
 {

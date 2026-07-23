@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Tests\Unit\Db;
+namespace ClarityMomentum\WCTagger\Tests\Unit\Db;
 
-use HarperAgency\WCTagger\Db\RuleRepository;
+use ClarityMomentum\WCTagger\Db\RuleRepository;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -100,7 +100,7 @@ class RuleRepositoryTest extends TestCase
         $wpdb->expects($this->once())
              ->method('insert')
              ->with(
-                 'wp_harper_tagger_rules',
+                 'wp_cm_tagger_rules',
                  $this->callback(fn($d) =>
                      $d['tag_id']       === 2 &&
                      $d['label']        === 'My rule' &&
@@ -176,7 +176,7 @@ class RuleRepositoryTest extends TestCase
 
         $wpdb->expects($this->once())
              ->method('delete')
-             ->with('wp_harper_tagger_rules', ['id' => 3])
+             ->with('wp_cm_tagger_rules', ['id' => 3])
              ->willReturn(1);
 
         $GLOBALS['wpdb'] = $wpdb;
@@ -217,7 +217,7 @@ class RuleRepositoryTest extends TestCase
         $wpdb->expects($this->once())
              ->method('insert')
              ->with(
-                 'wp_harper_tagger_rules',
+                 'wp_cm_tagger_rules',
                  $this->callback(fn($d) => $d['operator'] === 'AND')
              );
 
@@ -234,7 +234,7 @@ class RuleRepositoryTest extends TestCase
         $wpdb->expects($this->once())
              ->method('insert')
              ->with(
-                 'wp_harper_tagger_rules',
+                 'wp_cm_tagger_rules',
                  $this->callback(fn($d) => $d['operator'] === 'OR')
              );
 
@@ -255,7 +255,7 @@ class RuleRepositoryTest extends TestCase
         $wpdb->expects($this->once())
              ->method('insert')
              ->with(
-                 'wp_harper_tagger_rules',
+                 'wp_cm_tagger_rules',
                  $this->callback(fn($d) =>
                      is_string($d['conditions']) &&
                      json_decode($d['conditions'], true) === $conditions

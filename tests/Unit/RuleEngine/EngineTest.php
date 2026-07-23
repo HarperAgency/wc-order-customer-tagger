@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Tests\Unit\RuleEngine;
+namespace ClarityMomentum\WCTagger\Tests\Unit\RuleEngine;
 
 use HarperAgency\RuleEngine\Condition;
 use HarperAgency\RuleEngine\Engine;

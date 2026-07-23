@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Tests\Unit\Db;
+namespace ClarityMomentum\WCTagger\Tests\Unit\Db;
 
-use HarperAgency\WCTagger\Db\TagRepository;
+use ClarityMomentum\WCTagger\Db\TagRepository;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -69,7 +69,7 @@ class TagRepositoryTest extends TestCase
         $wpdb->expects($this->once())
              ->method('insert')
              ->with(
-                 'wp_harper_tagger_tags',
+                 'wp_cm_tagger_tags',
                  $this->callback(fn($d) =>
                      $d['name']  === 'High Value' &&
                      $d['slug']  === 'high-value' &&
@@ -98,7 +98,7 @@ class TagRepositoryTest extends TestCase
 
         $wpdb->expects($this->once())
              ->method('update')
-             ->with('wp_harper_tagger_tags', ['name' => 'Updated'], ['id' => 7])
+             ->with('wp_cm_tagger_tags', ['name' => 'Updated'], ['id' => 7])
              ->willReturn(1);
 
         $GLOBALS['wpdb'] = $wpdb;
@@ -125,7 +125,7 @@ class TagRepositoryTest extends TestCase
 
         $wpdb->expects($this->once())
              ->method('delete')
-             ->with('wp_harper_tagger_tags', ['id' => 5])
+             ->with('wp_cm_tagger_tags', ['id' => 5])
              ->willReturn(1);
 
         $GLOBALS['wpdb'] = $wpdb;
@@ -152,7 +152,7 @@ class TagRepositoryTest extends TestCase
 
         $wpdb->expects($this->once())
              ->method('insert')
-             ->with('wp_harper_tagger_tags',
+             ->with('wp_cm_tagger_tags',
                  $this->callback(fn($d) => $d['type'] === 'order')
              );
 
@@ -169,7 +169,7 @@ class TagRepositoryTest extends TestCase
 
         $wpdb->expects($this->once())
              ->method('insert')
-             ->with('wp_harper_tagger_tags',
+             ->with('wp_cm_tagger_tags',
                  $this->callback(fn($d) => $d['type'] === $type)
              );
 
@@ -192,7 +192,7 @@ class TagRepositoryTest extends TestCase
 
         $wpdb->expects($this->once())
              ->method('insert')
-             ->with('wp_harper_tagger_tags',
+             ->with('wp_cm_tagger_tags',
                  $this->callback(fn($d) => array_key_exists('image_url', $d) && $d['image_url'] === null)
              );
 
@@ -209,7 +209,7 @@ class TagRepositoryTest extends TestCase
 
         $wpdb->expects($this->once())
              ->method('insert')
-             ->with('wp_harper_tagger_tags',
+             ->with('wp_cm_tagger_tags',
                  $this->callback(fn($d) => strlen($d['image_url']) === 500)
              );
 
@@ -228,7 +228,7 @@ class TagRepositoryTest extends TestCase
 
         $wpdb->expects($this->once())
              ->method('insert')
-             ->with('wp_harper_tagger_tags',
+             ->with('wp_cm_tagger_tags',
                  $this->callback(fn($d) => strlen($d['name']) === 100)
              );
 

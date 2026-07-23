@@ -5,7 +5,7 @@
          colors="true"
          columns="max">
     <testsuites>
-        <testsuite name="Harper Order &amp; Customer Tagger Unit Tests">
+        <testsuite name="CM Order &amp; Customer Tagger Unit Tests">
             <directory>Unit</directory>
         </testsuite>
     </testsuites>

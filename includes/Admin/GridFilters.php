@@ -10,9 +10,9 @@
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Admin;
+namespace ClarityMomentum\WCTagger\Admin;
 
-use HarperAgency\WCTagger\RuleEngine\Tagger;
+use ClarityMomentum\WCTagger\RuleEngine\Tagger;
 
 if (!defined('ABSPATH')) exit;
 
@@ -58,7 +58,7 @@ class GridFilters
 
     public function renderOrderFilterHpos(): void
     {
-        $this->renderTagSelect('harper_tag_id', 'order');
+        $this->renderTagSelect('cm_tag_id', 'order');
     }
 
     // ── Orders filter — legacy post-based ─────────────────────────────────────
@@ -69,7 +69,7 @@ class GridFilters
         if ($typenow !== 'shop_order') {
             return;
         }
-        $this->renderTagSelect('harper_tag_id', 'order');
+        $this->renderTagSelect('cm_tag_id', 'order');
     }
 
     // ── Orders query — HPOS ───────────────────────────────────────────────────
@@ -82,13 +82,13 @@ class GridFilters
      */
     public function applyOrderTagFilterHpos(array $clauses, $query, array $args): array
     {
-        $tagId = (int) ($_GET['harper_tag_id'] ?? 0);
+        $tagId = (int) ($_GET['cm_tag_id'] ?? 0);
         if (!$tagId) {
             return $clauses;
         }
 
         global $wpdb;
-        $table = $wpdb->prefix . 'harper_tagger_order_tags';
+        $table = $wpdb->prefix . 'cm_tagger_order_tags';
         // wc_orders is the HPOS orders table; 'id' is its primary key
         $clauses['where'] .= $wpdb->prepare(
             " AND EXISTS (
@@ -110,13 +110,13 @@ class GridFilters
         if ($pagenow !== 'edit.php' || $typenow !== 'shop_order') {
             return $join;
         }
-        $tagId = (int) ($_GET['harper_tag_id'] ?? 0);
+        $tagId = (int) ($_GET['cm_tag_id'] ?? 0);
         if (!$tagId) {
             return $join;
         }
 
         global $wpdb;
-        $table = $wpdb->prefix . 'harper_tagger_order_tags';
+        $table = $wpdb->prefix . 'cm_tagger_order_tags';
         // Safe: tagId already cast to int
         $join .= " LEFT JOIN `{$table}` ht_tag_filter"
                . " ON ht_tag_filter.order_id = {$wpdb->posts}.ID"
@@ -130,7 +130,7 @@ class GridFilters
         if ($pagenow !== 'edit.php' || $typenow !== 'shop_order') {
             return $where;
         }
-        $tagId = (int) ($_GET['harper_tag_id'] ?? 0);
+        $tagId = (int) ($_GET['cm_tag_id'] ?? 0);
         if (!$tagId) {
             return $where;
         }
@@ -153,7 +153,7 @@ class GridFilters
         // users.php is not restricted to a post type — render unconditionally.
         // Non-customer users simply won't appear in the tag table, so the filter
         // is harmless on a store with mixed user roles.
-        $this->renderTagSelect('harper_customer_tag_id', 'customer');
+        $this->renderTagSelect('cm_customer_tag_id', 'customer');
     }
 
     /**
@@ -165,13 +165,13 @@ class GridFilters
         if (!is_admin()) {
             return $where;
         }
-        $tagId = (int) ($_GET['harper_customer_tag_id'] ?? 0);
+        $tagId = (int) ($_GET['cm_customer_tag_id'] ?? 0);
         if (!$tagId) {
             return $where;
         }
 
         global $wpdb;
-        $table = $wpdb->prefix . 'harper_tagger_customer_tags';
+        $table = $wpdb->prefix . 'cm_tagger_customer_tags';
         $where .= $wpdb->prepare(
             " AND {$wpdb->users}.ID IN (
                 SELECT customer_id FROM `{$table}` WHERE tag_id = %d
@@ -190,7 +190,7 @@ class GridFilters
      */
     public function addOrderBulkActions(array $actions): array
     {
-        $actions['harper_rerun_rules'] = __('Re-run Tagger Rules', 'wc-order-customer-tagger');
+        $actions['cm_rerun_rules'] = __('Re-run Tagger Rules', 'wc-order-customer-tagger');
         return $actions;
     }
 
@@ -204,7 +204,7 @@ class GridFilters
      */
     public function handleBulkRerun(string $redirectTo, string $action, array $orderIds): string
     {
-        if ($action !== 'harper_rerun_rules') {
+        if ($action !== 'cm_rerun_rules') {
             return $redirectTo;
         }
 
@@ -217,14 +217,14 @@ class GridFilters
             }
         }
 
-        return add_query_arg('harper_rerun_count', $count, $redirectTo);
+        return add_query_arg('cm_rerun_count', $count, $redirectTo);
     }
 
     // ── Admin notice ──────────────────────────────────────────────────────────
 
     public function showBulkRerunNotice(): void
     {
-        $count = (int) ($_GET['harper_rerun_count'] ?? 0);
+        $count = (int) ($_GET['cm_rerun_count'] ?? 0);
         if ($count <= 0) {
             return;
         }
@@ -233,6 +233,7 @@ class GridFilters
             '<div class="notice notice-success is-dismissible"><p>%s</p></div>',
             esc_html(
                 sprintf(
+                    /* translators: %d: number of orders processed */
                     _n(
                         'Tagger rules re-run on %d order.',
                         'Tagger rules re-run on %d orders.',
@@ -257,7 +258,7 @@ class GridFilters
         $p    = $wpdb->prefix;
         $rows = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT id, name FROM {$p}harper_tagger_tags
+                "SELECT id, name FROM {$p}cm_tagger_tags
                   WHERE type = %s
                   ORDER BY name ASC",
                 $tagType
@@ -269,18 +270,15 @@ class GridFilters
             return;
         }
 
-        $selected = (int) ($_GET[$paramName] ?? 0);
+        $selected = (int) ($_GET[$paramName] ?? 0); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         echo '<select name="' . esc_attr($paramName) . '" id="' . esc_attr($paramName) . '" style="float:none;margin-left:6px;">';
         echo '<option value="">' . esc_html__('Filter by tag&hellip;', 'wc-order-customer-tagger') . '</option>';
         foreach ($rows as $row) {
             $id   = (int) $row['id'];
             $name = (string) $row['name'];
-            printf(
-                '<option value="%d"%s>%s</option>',
-                $id,
-                $id === $selected ? ' selected' : '',
-                esc_html($name)
-            );
+            echo '<option value="' . absint( $id ) . '"'
+                . selected( $id, $selected, false )
+                . '>' . esc_html( $name ) . '</option>';
         }
         echo '</select>';
     }

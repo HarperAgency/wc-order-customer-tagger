@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) exit;
 
 $isNew    = ($tag === null);
 $title    = $isNew ? __('Add Tag', 'wc-order-customer-tagger') : __('Edit Tag', 'wc-order-customer-tagger');
-$listUrl  = add_query_arg(['page' => 'harper-tagger-tags'], admin_url('admin.php'));
+$listUrl  = add_query_arg(['page' => 'cm-tagger-tags'], admin_url('admin.php'));
 
 // Merge saved values with any re-posted data (re-posted wins after validation fail)
 $val = array_merge(
@@ -21,7 +21,7 @@ $val = array_merge(
 );
 $tagId = $isNew ? 0 : (int) $tag['id'];
 ?>
-<div class="wrap harper-tagger">
+<div class="wrap cm-tagger">
     <h1>
         <?php echo esc_html($title); ?>
         <a href="<?php echo esc_url($listUrl); ?>" class="page-title-action">
@@ -36,37 +36,37 @@ $tagId = $isNew ? 0 : (int) $tag['id'];
     </div>
     <?php endif; ?>
 
-    <form method="post" action="<?php echo esc_url(add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'save'], admin_url('admin.php'))); ?>">
-        <?php wp_nonce_field('harper_tagger_save_tag'); ?>
+    <form method="post" action="<?php echo esc_url(add_query_arg(['page' => 'cm-tagger-tags', 'action' => 'save'], admin_url('admin.php'))); ?>">
+        <?php wp_nonce_field('cm_tagger_save_tag'); ?>
         <input type="hidden" name="tag_id" value="<?php echo esc_attr((string) $tagId); ?>">
 
         <table class="form-table" role="presentation">
             <tr>
                 <th scope="row">
-                    <label for="harper-tag-name"><?php esc_html_e('Name', 'wc-order-customer-tagger'); ?> <span class="required">*</span></label>
+                    <label for="cm-tag-name"><?php esc_html_e('Name', 'wc-order-customer-tagger'); ?> <span class="required">*</span></label>
                 </th>
                 <td>
-                    <input type="text" id="harper-tag-name" name="name" class="regular-text"
+                    <input type="text" id="cm-tag-name" name="name" class="regular-text"
                            value="<?php echo esc_attr($val['name']); ?>" maxlength="100" required>
                     <p class="description"><?php esc_html_e('Displayed as a badge on orders and customers.', 'wc-order-customer-tagger'); ?></p>
                 </td>
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="harper-tag-color"><?php esc_html_e('Badge Color', 'wc-order-customer-tagger'); ?></label>
+                    <label for="cm-tag-color"><?php esc_html_e('Badge Color', 'wc-order-customer-tagger'); ?></label>
                 </th>
                 <td>
-                    <input type="text" id="harper-tag-color" name="color" class="harper-color-picker"
+                    <input type="text" id="cm-tag-color" name="color" class="cm-color-picker"
                            value="<?php echo esc_attr($val['color']); ?>">
                     <p class="description"><?php esc_html_e('Used when no custom image is set.', 'wc-order-customer-tagger'); ?></p>
                 </td>
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="harper-tag-type"><?php esc_html_e('Applies To', 'wc-order-customer-tagger'); ?></label>
+                    <label for="cm-tag-type"><?php esc_html_e('Applies To', 'wc-order-customer-tagger'); ?></label>
                 </th>
                 <td>
-                    <select id="harper-tag-type" name="type">
+                    <select id="cm-tag-type" name="type">
                         <option value="order"    <?php selected($val['type'], 'order'); ?>><?php esc_html_e('Orders only', 'wc-order-customer-tagger'); ?></option>
                         <option value="customer" <?php selected($val['type'], 'customer'); ?>><?php esc_html_e('Customers only', 'wc-order-customer-tagger'); ?></option>
                         <option value="both"     <?php selected($val['type'], 'both'); ?>><?php esc_html_e('Both orders &amp; customers', 'wc-order-customer-tagger'); ?></option>
@@ -75,18 +75,18 @@ $tagId = $isNew ? 0 : (int) $tag['id'];
             </tr>
             <tr>
                 <th scope="row">
-                    <label for="harper-tag-image"><?php esc_html_e('Custom Icon URL', 'wc-order-customer-tagger'); ?></label>
+                    <label for="cm-tag-image"><?php esc_html_e('Custom Icon URL', 'wc-order-customer-tagger'); ?></label>
                 </th>
                 <td>
-                    <input type="url" id="harper-tag-image" name="image_url" class="regular-text"
+                    <input type="url" id="cm-tag-image" name="image_url" class="regular-text"
                            value="<?php echo esc_attr($val['image_url'] ?? ''); ?>"
                            placeholder="https://...">
                     <p class="description">
                         <?php esc_html_e('Optional PNG or SVG. Leave blank to use the color badge above.', 'wc-order-customer-tagger'); ?>
                     </p>
                     <?php if (!empty($val['image_url'])): ?>
-                    <div class="harper-tagger-icon-preview-wrap">
-                        <img src="<?php echo esc_url($val['image_url']); ?>" alt="" class="harper-tagger-icon-preview">
+                    <div class="cm-tagger-icon-preview-wrap">
+                        <img src="<?php echo esc_url($val['image_url']); ?>" alt="" class="cm-tagger-icon-preview">
                     </div>
                     <?php endif; ?>
                 </td>
@@ -97,9 +97,9 @@ $tagId = $isNew ? 0 : (int) $tag['id'];
         <h3><?php esc_html_e('Preview', 'wc-order-customer-tagger'); ?></h3>
         <p>
             <?php if (!empty($val['image_url'])): ?>
-                <img src="<?php echo esc_url($val['image_url']); ?>" alt="" class="harper-tagger-icon-preview">
+                <img src="<?php echo esc_url($val['image_url']); ?>" alt="" class="cm-tagger-icon-preview">
             <?php else: ?>
-                <span class="harper-tagger-badge" id="harper-badge-preview"
+                <span class="cm-tagger-badge" id="cm-badge-preview"
                       style="background:<?php echo esc_attr($val['color']); ?>">
                     <?php echo esc_html($val['name'] ?: __('Preview', 'wc-order-customer-tagger')); ?>
                 </span>
@@ -114,8 +114,8 @@ $tagId = $isNew ? 0 : (int) $tag['id'];
     <h2><?php esc_html_e('Rules for this tag', 'wc-order-customer-tagger'); ?></h2>
 
     <?php
-    $addRuleUrl  = add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'rule-add',  'tag_id' => $tagId], admin_url('admin.php'));
-    $rulesUrl    = add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'rules',     'tag_id' => $tagId], admin_url('admin.php'));
+    $addRuleUrl  = add_query_arg(['page' => 'cm-tagger-tags', 'action' => 'rule-add',  'tag_id' => $tagId], admin_url('admin.php'));
+    $rulesUrl    = add_query_arg(['page' => 'cm-tagger-tags', 'action' => 'rules',     'tag_id' => $tagId], admin_url('admin.php'));
     $operatorLabels = ['AND' => __('AND', 'wc-order-customer-tagger'), 'OR' => __('OR', 'wc-order-customer-tagger')];
     ?>
 
@@ -124,7 +124,7 @@ $tagId = $isNew ? 0 : (int) $tag['id'];
        <a href="<?php echo esc_url($addRuleUrl); ?>"><?php esc_html_e('Add the first rule', 'wc-order-customer-tagger'); ?></a>.
     </p>
     <?php else: ?>
-    <table class="wp-list-table widefat fixed striped harper-tagger-list">
+    <table class="wp-list-table widefat fixed striped cm-tagger-list">
         <thead>
             <tr>
                 <th style="width:40px"><?php esc_html_e('ID', 'wc-order-customer-tagger'); ?></th>
@@ -139,10 +139,10 @@ $tagId = $isNew ? 0 : (int) $tag['id'];
         <tbody>
         <?php foreach ($rules as $rule):
             $ruleId  = (int) $rule['id'];
-            $editUrl = add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'rule-edit',   'tag_id' => $tagId, 'id' => $ruleId], admin_url('admin.php'));
+            $editUrl = add_query_arg(['page' => 'cm-tagger-tags', 'action' => 'rule-edit',   'tag_id' => $tagId, 'id' => $ruleId], admin_url('admin.php'));
             $delUrl  = wp_nonce_url(
-                add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'rule-delete', 'tag_id' => $tagId, 'id' => $ruleId], admin_url('admin.php')),
-                'harper_tagger_delete_rule_' . $ruleId
+                add_query_arg(['page' => 'cm-tagger-tags', 'action' => 'rule-delete', 'tag_id' => $tagId, 'id' => $ruleId], admin_url('admin.php')),
+                'cm_tagger_delete_rule_' . $ruleId
             );
         ?>
         <tr>
@@ -157,7 +157,7 @@ $tagId = $isNew ? 0 : (int) $tag['id'];
                 &nbsp;|&nbsp;
                 <a href="<?php echo esc_url($delUrl); ?>"
                    onclick="return confirm('<?php esc_attr_e('Delete this rule? This cannot be undone.', 'wc-order-customer-tagger'); ?>')"
-                   class="harper-tagger-delete-link">
+                   class="cm-tagger-delete-link">
                     <?php esc_html_e('Delete', 'wc-order-customer-tagger'); ?>
                 </a>
             </td>

@@ -7,9 +7,9 @@
  */
 if (!defined('ABSPATH')) exit;
 
-$addUrl = add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'add'], admin_url('admin.php'));
+$addUrl = add_query_arg(['page' => 'cm-tagger-tags', 'action' => 'add'], admin_url('admin.php'));
 ?>
-<div class="wrap harper-tagger">
+<div class="wrap cm-tagger">
     <h1 class="wp-heading-inline"><?php esc_html_e('Order &amp; Customer Tags', 'wc-order-customer-tagger'); ?></h1>
     <a href="<?php echo esc_url($addUrl); ?>" class="page-title-action">
         <?php esc_html_e('Add Tag', 'wc-order-customer-tagger'); ?>
@@ -25,7 +25,7 @@ $addUrl = add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'add'], adm
     <?php if (empty($tags)): ?>
     <p><?php esc_html_e('No tags yet. Create your first tag to get started.', 'wc-order-customer-tagger'); ?></p>
     <?php else: ?>
-    <table class="wp-list-table widefat fixed striped harper-tagger-list">
+    <table class="wp-list-table widefat fixed striped cm-tagger-list">
         <thead>
             <tr>
                 <th style="width:40px"><?php esc_html_e('ID', 'wc-order-customer-tagger'); ?></th>
@@ -41,10 +41,10 @@ $addUrl = add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'add'], adm
         <tbody>
         <?php foreach ($tags as $tag):
             $id      = (int) $tag['id'];
-            $editUrl = add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'edit', 'id' => $id], admin_url('admin.php'));
+            $editUrl = add_query_arg(['page' => 'cm-tagger-tags', 'action' => 'edit', 'id' => $id], admin_url('admin.php'));
             $delUrl  = wp_nonce_url(
-                add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'delete', 'id' => $id], admin_url('admin.php')),
-                'harper_tagger_delete_tag_' . $id
+                add_query_arg(['page' => 'cm-tagger-tags', 'action' => 'delete', 'id' => $id], admin_url('admin.php')),
+                'cm_tagger_delete_tag_' . $id
             );
             $typeLabels = ['order' => __('Order', 'wc-order-customer-tagger'),
                            'customer' => __('Customer', 'wc-order-customer-tagger'),
@@ -54,9 +54,9 @@ $addUrl = add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'add'], adm
             <td><?php echo esc_html((string) $id); ?></td>
             <td>
                 <?php if (!empty($tag['image_url'])): ?>
-                    <img src="<?php echo esc_url($tag['image_url']); ?>" alt="" class="harper-tagger-icon-preview">
+                    <img src="<?php echo esc_url($tag['image_url']); ?>" alt="" class="cm-tagger-icon-preview">
                 <?php else: ?>
-                    <span class="harper-tagger-badge" style="background:<?php echo esc_attr($tag['color']); ?>">
+                    <span class="cm-tagger-badge" style="background:<?php echo esc_attr($tag['color']); ?>">
                         <?php echo esc_html($tag['name']); ?>
                     </span>
                 <?php endif; ?>
@@ -71,7 +71,7 @@ $addUrl = add_query_arg(['page' => 'harper-tagger-tags', 'action' => 'add'], adm
                 &nbsp;|&nbsp;
                 <a href="<?php echo esc_url($delUrl); ?>"
                    onclick="return confirm('<?php esc_attr_e('Delete this tag? This cannot be undone.', 'wc-order-customer-tagger'); ?>')"
-                   class="harper-tagger-delete-link">
+                   class="cm-tagger-delete-link">
                     <?php esc_html_e('Delete', 'wc-order-customer-tagger'); ?>
                 </a>
             </td>

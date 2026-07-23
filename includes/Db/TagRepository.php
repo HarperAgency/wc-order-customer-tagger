@@ -1,11 +1,11 @@
 <?php
 /**
- * CRUD operations for the harper_tagger_tags table.
+ * CRUD operations for the cm_tagger_tags table.
  * All public methods accept/return plain arrays — no WP objects leak out.
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Db;
+namespace ClarityMomentum\WCTagger\Db;
 
 if (!defined('ABSPATH')) exit;
 
@@ -18,7 +18,7 @@ class TagRepository
     public function __construct()
     {
         global $wpdb;
-        $this->table = $wpdb->prefix . 'harper_tagger_tags';
+        $this->table = $wpdb->prefix . 'cm_tagger_tags';
     }
 
     /** @return array<int, array<string, mixed>> */
@@ -88,7 +88,7 @@ class TagRepository
     public function countRulesForTag(int $tagId): int
     {
         global $wpdb;
-        $rulesTable = $wpdb->prefix . 'harper_tagger_rules';
+        $rulesTable = $wpdb->prefix . 'cm_tagger_rules';
         return (int) $wpdb->get_var(
             $wpdb->prepare("SELECT COUNT(*) FROM {$rulesTable} WHERE tag_id = %d", $tagId)
         );
@@ -118,7 +118,7 @@ class TagRepository
                     $slug
                 );
 
-            if (!$wpdb->get_var($sql)) {
+            if (!$wpdb->get_var($sql)) { // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
                 break;
             }
             $slug = "{$base}-{$i}";

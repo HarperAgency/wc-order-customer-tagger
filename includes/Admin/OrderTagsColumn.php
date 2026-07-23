@@ -4,7 +4,7 @@
  */
 declare(strict_types=1);
 
-namespace HarperAgency\WCTagger\Admin;
+namespace ClarityMomentum\WCTagger\Admin;
 
 if (!defined('ABSPATH')) exit;
 
@@ -30,12 +30,12 @@ class OrderTagsColumn
         foreach ($columns as $key => $label) {
             $new[$key] = $label;
             if ($key === 'order_status') {
-                $new['harper_tags'] = __('Tags', 'wc-order-customer-tagger');
+                $new['cm_tags'] = __('Tags', 'wc-order-customer-tagger');
             }
         }
         // Fallback: wasn't inserted yet (column order differs)
-        if (!isset($new['harper_tags'])) {
-            $new['harper_tags'] = __('Tags', 'wc-order-customer-tagger');
+        if (!isset($new['cm_tags'])) {
+            $new['cm_tags'] = __('Tags', 'wc-order-customer-tagger');
         }
         return $new;
     }
@@ -45,7 +45,7 @@ class OrderTagsColumn
      */
     public function renderColumn(string $column, \WC_Order $order): void
     {
-        if ($column !== 'harper_tags') return;
+        if ($column !== 'cm_tags') return;
         $this->outputTags($this->getOrderTags($order->get_id()), $order->get_id());
     }
 
@@ -54,7 +54,7 @@ class OrderTagsColumn
      */
     public function renderLegacyColumn(string $column, int $postId): void
     {
-        if ($column !== 'harper_tags') return;
+        if ($column !== 'cm_tags') return;
         $this->outputTags($this->getOrderTags($postId), $postId);
     }
 
@@ -64,36 +64,32 @@ class OrderTagsColumn
         if (!in_array($hook, $screens, true)) return;
 
         wp_enqueue_style(
-            'harper-tagger-admin',
-            WC_TAGGER_URL . 'admin/css/tagger-admin.css',
+            'cm-tagger-admin',
+            CM_TAGGER_URL . 'admin/css/tagger-admin.css',
             [],
-            WC_TAGGER_VERSION
+            CM_TAGGER_VERSION
         );
     }
 
     private function outputTags(array $tags, int $orderId): void
     {
-        printf(
-            '<div class="harper-tagger-cell" data-type="order" data-id="%d" title="%s">',
-            $orderId,
-            esc_attr__('Click to edit tags', 'wc-order-customer-tagger')
-        );
+        echo '<div class="cm-tagger-cell" data-type="order" data-id="' . absint( $orderId ) . '" title="' . esc_attr__( 'Click to edit tags', 'wc-order-customer-tagger' ) . '">';
 
         if (empty($tags)) {
-            echo '<span class="harper-tagger-no-tags">—</span>';
+            echo '<span class="cm-tagger-no-tags">—</span>';
         } else {
-            echo '<div class="harper-tagger-column-tags">';
+            echo '<div class="cm-tagger-column-tags">';
             foreach ($tags as $tag) {
                 if (!empty($tag['image_url'])) {
                     printf(
-                        '<img src="%s" alt="%s" title="%s" class="harper-tagger-icon-preview">',
+                        '<img src="%s" alt="%s" title="%s" class="cm-tagger-icon-preview">',
                         esc_url($tag['image_url']),
                         esc_attr($tag['name']),
                         esc_attr($tag['name'])
                     );
                 } else {
                     printf(
-                        '<span class="harper-tagger-badge" style="background:%s" title="%s">%s</span>',
+                        '<span class="cm-tagger-badge" style="background:%s" title="%s">%s</span>',
                         esc_attr($tag['color']),
                         esc_attr($tag['name']),
                         esc_html($tag['name'])
@@ -109,9 +105,10 @@ class OrderTagsColumn
     private function getOrderTags(int $orderId): array
     {
         global $wpdb;
-        $otTable   = $wpdb->prefix . 'harper_tagger_order_tags';
-        $tagsTable = $wpdb->prefix . 'harper_tagger_tags';
+        $otTable   = $wpdb->prefix . 'cm_tagger_order_tags';
+        $tagsTable = $wpdb->prefix . 'cm_tagger_tags';
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         return $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT t.id, t.name, t.color, t.image_url
