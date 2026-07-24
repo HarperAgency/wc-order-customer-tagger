@@ -10,6 +10,7 @@ declare(strict_types=1);
 /**
  * Registers and manages the hourly WP-Cron event for feed cache refresh.
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound -- bundled library, class name intentionally uses CM_ prefix
 class CM_Feed_Scheduler {
 
 	/**

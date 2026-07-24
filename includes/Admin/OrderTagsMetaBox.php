@@ -2,102 +2,149 @@
 /**
  * Meta box: show applied tags on the WooCommerce order detail screen.
  * Supports both HPOS (woocommerce_page_wc-orders) and legacy (shop_order).
+ *
+ * @package ClarityMomentum\WCTagger\Admin
  */
+
 declare(strict_types=1);
 
 namespace ClarityMomentum\WCTagger\Admin;
 
-if (!defined('ABSPATH')) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-class OrderTagsMetaBox
-{
-    public function register(): void
-    {
-        add_action('add_meta_boxes', [$this, 'addMetaBox']);
-        add_action('admin_enqueue_scripts', [$this, 'enqueueAssets']);
-    }
+/**
+ * Registers and renders the Order Tags meta box on the WC order edit screen.
+ */
+class OrderTagsMetaBox {
 
-    public function addMetaBox(): void
-    {
-        $screens = ['shop_order', 'woocommerce_page_wc-orders'];
+	/**
+	 * Register the meta box and asset hooks.
+	 */
+	public function register(): void {
+		add_action( 'add_meta_boxes', array( $this, 'add_meta_box' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+	}
 
-        foreach ($screens as $screen) {
-            add_meta_box(
-                'cm_tagger_order_tags',
-                __('Order Tags', 'wc-order-customer-tagger'),
-                [$this, 'renderMetaBox'],
-                $screen,
-                'side',
-                'default'
-            );
-        }
-    }
+	/**
+	 * Register the meta box on order edit screens.
+	 */
+	public function add_meta_box(): void {
+		$screens = array( 'shop_order', 'woocommerce_page_wc-orders' );
 
-    public function enqueueAssets(string $hook): void
-    {
-        $orderScreens = ['post.php', 'post-new.php', 'woocommerce_page_wc-orders'];
+		foreach ( $screens as $screen ) {
+			add_meta_box(
+				'cm_tagger_order_tags',
+				__( 'Order Tags', 'cm-order-customer-tagger' ),
+				array( $this, 'render_meta_box' ),
+				$screen,
+				'side',
+				'default'
+			);
+		}
+	}
 
-        if (!in_array($hook, $orderScreens, true)) {
-            // Also allow when the current screen post type is shop_order
-            $screen = get_current_screen();
-            if (!$screen || $screen->post_type !== 'shop_order') {
-                return;
-            }
-        }
+	/**
+	 * Enqueue admin CSS on order edit screens.
+	 *
+	 * @param string $hook Current admin page hook.
+	 */
+	public function enqueue_assets( string $hook ): void {
+		$order_screens = array( 'post.php', 'post-new.php', 'woocommerce_page_wc-orders' );
 
-        wp_enqueue_style(
-            'cm-tagger-admin',
-            CM_TAGGER_URL . 'admin/css/tagger-admin.css',
-            [],
-            CM_TAGGER_VERSION
-        );
-    }
+		if ( ! in_array( $hook, $order_screens, true ) ) {
+			// Also allow when the current screen post type is shop_order.
+			$screen = get_current_screen();
+			if ( ! $screen || 'shop_order' !== $screen->post_type ) {
+				return;
+			}
+		}
 
-    /**
-     * Render callback — receives a WP_Post or WC_Order depending on HPOS mode.
-     *
-     * @param \WP_Post|\WC_Order $postOrOrder
-     */
-    public function renderMetaBox($postOrOrder): void
-    {
-        // Resolve the order ID from either a WP_Post or a WC_Order
-        if ($postOrOrder instanceof \WC_Order) {
-            $orderId = $postOrOrder->get_id();
-        } elseif ($postOrOrder instanceof \WP_Post) {
-            $orderId = $postOrOrder->ID;
-        } else {
-            $orderId = 0;
-        }
+		wp_enqueue_style(
+			'cm-tagger-admin',
+			CM_TAGGER_URL . 'admin/css/tagger-admin.css',
+			array(),
+			CM_TAGGER_VERSION
+		);
+	}
 
-        $tags = $orderId > 0 ? $this->getOrderTags($orderId) : [];
+	/**
+	 * Render callback — receives a WP_Post or WC_Order depending on HPOS mode.
+	 *
+	 * @param \WP_Post|\WC_Order $post_or_order Post or order object from WP.
+	 */
+	public function render_meta_box( $post_or_order ): void {
+		// Resolve the order ID from either a WC_Order (HPOS) or a WP_Post (legacy).
+		if ( $post_or_order instanceof \WC_Order ) {
+			$order_id = $post_or_order->get_id();
+		} else {
+			// Legacy mode: the callback receives a WP_Post whose ID is the order ID.
+			$order_id = $post_or_order->ID;
+		}
 
-        require CM_TAGGER_DIR . 'admin/views/order-tags-metabox.php';
-    }
+		$tags = $order_id > 0 ? $this->get_order_tags( $order_id ) : array();
 
-    /**
-     * Fetch applied tags for an order.
-     *
-     * @return array<int, array<string, mixed>>
-     */
-    private function getOrderTags(int $orderId): array
-    {
-        global $wpdb;
-        $otTable   = $wpdb->prefix . 'cm_tagger_order_tags';
-        $tagsTable = $wpdb->prefix . 'cm_tagger_tags';
+		require CM_TAGGER_DIR . 'admin/views/order-tags-metabox.php';
+	}
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-        $rows = $wpdb->get_results(
-            $wpdb->prepare(
-                "SELECT t.id, t.name, t.color, t.image_url
-                   FROM {$otTable} ot
-                   JOIN {$tagsTable} t ON t.id = ot.tag_id
+	/**
+	 * Fetch applied tags for an order.
+	 *
+	 * @param int $order_id WC order ID.
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function get_order_tags( int $order_id ): array {
+		global $wpdb;
+		$ot_table   = $wpdb->prefix . 'cm_tagger_order_tags';
+		$tags_table = $wpdb->prefix . 'cm_tagger_tags';
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT t.id, t.name, t.color, t.image_url
+                   FROM %i ot
+                   JOIN %i t ON t.id = ot.tag_id
                   WHERE ot.order_id = %d
-                  ORDER BY t.name ASC",
-                $orderId
-            ),
-            ARRAY_A
-        );
+                  ORDER BY t.name ASC',
+				$ot_table,
+				$tags_table,
+				$order_id
+			),
+			ARRAY_A
+		);
 
-        return $rows ?: [];
-    }
+		return $rows ? $rows : array();
+	}
+
+	// ── BC shims ──────────────────────────────────────────────────────────────
+
+	/**
+	 * BC shim — registered as an add_meta_boxes callback.
+	 *
+	 * @deprecated Use add_meta_box() instead.
+	 */
+	public function addMetaBox(): void { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
+		$this->add_meta_box();
+	}
+
+	/**
+	 * BC shim — registered as an admin_enqueue_scripts callback.
+	 *
+	 * @param string $hook Current admin page hook.
+	 * @deprecated Use enqueue_assets() instead.
+	 */
+	public function enqueueAssets( string $hook ): void { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
+		$this->enqueue_assets( $hook );
+	}
+
+	/**
+	 * BC shim — registered as a meta box render callback.
+	 *
+	 * @param \WP_Post|\WC_Order $post_or_order Post or order object from WP.
+	 * @deprecated Use render_meta_box() instead.
+	 */
+	public function renderMetaBox( $post_or_order ): void { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
+		$this->render_meta_box( $post_or_order );
+	}
 }

@@ -1,0 +1,597 @@
+# Copyright (C) 2026 Clarity Momentum
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: CM Order & Customer Tagger 1.3.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wc-order-customer-tagger\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-07-23T22:11:57+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: cm-order-customer-tagger\n"
+
+#. Plugin Name of the plugin
+#: wc-order-customer-tagger.php
+msgid "CM Order & Customer Tagger"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: wc-order-customer-tagger.php
+msgid "https://claritymomentum.io/products/cm-order-customer-tagger/"
+msgstr ""
+
+#. Description of the plugin
+#: wc-order-customer-tagger.php
+msgid "Automatically tag WooCommerce orders and customers using flexible, configurable rules. Surface insights in your order and customer lists at a glance."
+msgstr ""
+
+#. Author of the plugin
+#: wc-order-customer-tagger.php
+msgid "Clarity Momentum"
+msgstr ""
+
+#. Author URI of the plugin
+#: wc-order-customer-tagger.php
+msgid "https://claritymomentum.io"
+msgstr ""
+
+#: admin/views/customer-tags-profile.php:10
+msgid "Customer Tags"
+msgstr ""
+
+#: admin/views/customer-tags-profile.php:13
+msgid "Applied Tags"
+msgstr ""
+
+#: admin/views/customer-tags-profile.php:16
+msgid "No customer tags applied."
+msgstr ""
+
+#: admin/views/order-tags-metabox.php:11
+msgid "No tags applied."
+msgstr ""
+
+#: admin/views/rules-edit.php:15
+#: admin/views/rules-list.php:29
+msgid "Add Rule"
+msgstr ""
+
+#: admin/views/rules-edit.php:15
+msgid "Edit Rule"
+msgstr ""
+
+#: admin/views/rules-edit.php:38
+msgid "Order total"
+msgstr ""
+
+#: admin/views/rules-edit.php:39
+msgid "Item count"
+msgstr ""
+
+#: admin/views/rules-edit.php:40
+msgid "Customer LTV"
+msgstr ""
+
+#: admin/views/rules-edit.php:41
+msgid "Customer order count"
+msgstr ""
+
+#: admin/views/rules-edit.php:42
+msgid "Days since last order"
+msgstr ""
+
+#: admin/views/rules-edit.php:43
+msgid "Customer account age (days)"
+msgstr ""
+
+#: admin/views/rules-edit.php:44
+msgid "Payment status"
+msgstr ""
+
+#: admin/views/rules-edit.php:45
+msgid "Payment method"
+msgstr ""
+
+#: admin/views/rules-edit.php:46
+msgid "Shipping method"
+msgstr ""
+
+#: admin/views/rules-edit.php:47
+msgid "Shipping country"
+msgstr ""
+
+#: admin/views/rules-edit.php:48
+msgid "Billing country"
+msgstr ""
+
+#: admin/views/rules-edit.php:49
+msgid "Is guest"
+msgstr ""
+
+#: admin/views/rules-edit.php:50
+msgid "Is first order"
+msgstr ""
+
+#: admin/views/rules-edit.php:51
+msgid "Has coupon"
+msgstr ""
+
+#: admin/views/rules-edit.php:52
+msgid "Address mismatch"
+msgstr ""
+
+#: admin/views/rules-edit.php:57
+msgid "greater than (>)"
+msgstr ""
+
+#: admin/views/rules-edit.php:58
+msgid "greater than or equal (>=)"
+msgstr ""
+
+#: admin/views/rules-edit.php:59
+msgid "less than (<)"
+msgstr ""
+
+#: admin/views/rules-edit.php:60
+msgid "less than or equal (<=)"
+msgstr ""
+
+#: admin/views/rules-edit.php:61
+msgid "equals (=)"
+msgstr ""
+
+#: admin/views/rules-edit.php:64
+msgid "equals"
+msgstr ""
+
+#: admin/views/rules-edit.php:65
+msgid "contains"
+msgstr ""
+
+#: admin/views/rules-edit.php:66
+msgid "in list"
+msgstr ""
+
+#: admin/views/rules-edit.php:67
+msgid "not in list"
+msgstr ""
+
+#: admin/views/rules-edit.php:70
+msgid "is true"
+msgstr ""
+
+#: admin/views/rules-edit.php:71
+msgid "is false"
+msgstr ""
+
+#. translators: %s: tag name
+#: admin/views/rules-edit.php:81
+#, php-format
+msgid "for tag: %s"
+msgstr ""
+
+#: admin/views/rules-edit.php:85
+msgid "Back to Rules"
+msgstr ""
+
+#: admin/views/rules-edit.php:106
+#: admin/views/rules-list.php:52
+#: admin/views/tags-edit.php:132
+msgid "Label"
+msgstr ""
+
+#: admin/views/rules-edit.php:111
+msgid "Human-readable description, e.g. \"Order total over $500\"."
+msgstr ""
+
+#: admin/views/rules-edit.php:115
+#: admin/views/rules-list.php:53
+msgid "Logic"
+msgstr ""
+
+#: admin/views/rules-edit.php:121
+msgid "AND — all conditions must match"
+msgstr ""
+
+#: admin/views/rules-edit.php:127
+msgid "OR — any condition must match"
+msgstr ""
+
+#: admin/views/rules-edit.php:134
+#: admin/views/rules-list.php:54
+#: admin/views/tags-edit.php:134
+msgid "Priority"
+msgstr ""
+
+#: admin/views/rules-edit.php:139
+msgid "Lower numbers run first. Default: 10."
+msgstr ""
+
+#: admin/views/rules-edit.php:143
+#: admin/views/rules-list.php:55
+#: admin/views/tags-edit.php:135
+msgid "Active"
+msgstr ""
+
+#: admin/views/rules-edit.php:148
+msgid "Enable this rule"
+msgstr ""
+
+#: admin/views/rules-edit.php:155
+#: admin/views/rules-list.php:56
+#: admin/views/tags-edit.php:136
+msgid "Conditions"
+msgstr ""
+
+#: admin/views/rules-edit.php:157
+msgid "For \"in list\" / \"not in list\" operators, enter comma-separated values. Boolean operators need no value."
+msgstr ""
+
+#: admin/views/rules-edit.php:184
+msgid "Field"
+msgstr ""
+
+#: admin/views/rules-edit.php:185
+msgid "— select field —"
+msgstr ""
+
+#: admin/views/rules-edit.php:195
+msgid "Operator"
+msgstr ""
+
+#: admin/views/rules-edit.php:210
+msgid "value"
+msgstr ""
+
+#: admin/views/rules-edit.php:211
+msgid "Value"
+msgstr ""
+
+#: admin/views/rules-edit.php:215
+msgid "Remove condition"
+msgstr ""
+
+#: admin/views/rules-edit.php:224
+msgid "+ Add Condition"
+msgstr ""
+
+#: admin/views/rules-edit.php:228
+msgid "Create Rule"
+msgstr ""
+
+#: admin/views/rules-edit.php:228
+msgid "Update Rule"
+msgstr ""
+
+#: admin/views/rules-list.php:17
+#: admin/views/tags-edit.php:120
+msgid "AND"
+msgstr ""
+
+#: admin/views/rules-list.php:18
+#: admin/views/tags-edit.php:120
+msgid "OR"
+msgstr ""
+
+#. translators: %s: tag name
+#: admin/views/rules-list.php:25
+#, php-format
+msgid "Rules — %s"
+msgstr ""
+
+#: admin/views/rules-list.php:32
+msgid "Back to Tag"
+msgstr ""
+
+#: admin/views/rules-list.php:44
+#: admin/views/tags-edit.php:124
+msgid "No rules yet."
+msgstr ""
+
+#: admin/views/rules-list.php:45
+#: admin/views/tags-edit.php:125
+msgid "Add the first rule"
+msgstr ""
+
+#: admin/views/rules-list.php:51
+#: admin/views/tags-edit.php:131
+#: admin/views/tags-list.php:32
+msgid "ID"
+msgstr ""
+
+#: admin/views/rules-list.php:57
+#: admin/views/tags-edit.php:137
+#: admin/views/tags-list.php:39
+msgid "Actions"
+msgstr ""
+
+#: admin/views/rules-list.php:76
+#: admin/views/tags-edit.php:154
+msgid "Yes"
+msgstr ""
+
+#: admin/views/rules-list.php:78
+#: admin/views/tags-edit.php:154
+msgid "No"
+msgstr ""
+
+#: admin/views/rules-list.php:83
+#: admin/views/tags-edit.php:157
+#: admin/views/tags-list.php:71
+msgid "Edit"
+msgstr ""
+
+#: admin/views/rules-list.php:86
+#: admin/views/tags-edit.php:160
+msgid "Delete this rule? This cannot be undone."
+msgstr ""
+
+#: admin/views/rules-list.php:88
+#: admin/views/tags-edit.php:162
+#: admin/views/tags-list.php:76
+msgid "Delete"
+msgstr ""
+
+#: admin/views/tags-edit.php:14
+#: admin/views/tags-list.php:16
+msgid "Add Tag"
+msgstr ""
+
+#: admin/views/tags-edit.php:14
+msgid "Edit Tag"
+msgstr ""
+
+#: admin/views/tags-edit.php:29
+msgid "All Tags"
+msgstr ""
+
+#: admin/views/tags-edit.php:47
+#: admin/views/tags-list.php:34
+msgid "Name"
+msgstr ""
+
+#: admin/views/tags-edit.php:52
+msgid "Displayed as a badge on orders and customers."
+msgstr ""
+
+#: admin/views/tags-edit.php:57
+msgid "Badge Color"
+msgstr ""
+
+#: admin/views/tags-edit.php:62
+msgid "Used when no custom image is set."
+msgstr ""
+
+#: admin/views/tags-edit.php:67
+msgid "Applies To"
+msgstr ""
+
+#: admin/views/tags-edit.php:71
+msgid "Orders only"
+msgstr ""
+
+#: admin/views/tags-edit.php:72
+msgid "Customers only"
+msgstr ""
+
+#: admin/views/tags-edit.php:73
+msgid "Both orders &amp; customers"
+msgstr ""
+
+#: admin/views/tags-edit.php:79
+msgid "Custom Icon URL"
+msgstr ""
+
+#: admin/views/tags-edit.php:86
+msgid "Optional PNG or SVG. Leave blank to use the color badge above."
+msgstr ""
+
+#: admin/views/tags-edit.php:98
+#: admin/views/tags-edit.php:105
+msgid "Preview"
+msgstr ""
+
+#: admin/views/tags-edit.php:110
+msgid "Create Tag"
+msgstr ""
+
+#: admin/views/tags-edit.php:110
+msgid "Update Tag"
+msgstr ""
+
+#: admin/views/tags-edit.php:115
+msgid "Rules for this tag"
+msgstr ""
+
+#: admin/views/tags-edit.php:133
+msgid "Op"
+msgstr ""
+
+#: admin/views/tags-edit.php:173
+msgid "+ Add Rule"
+msgstr ""
+
+#: admin/views/tags-edit.php:177
+msgid "Manage Rules"
+msgstr ""
+
+#: admin/views/tags-list.php:14
+msgid "Order &amp; Customer Tags"
+msgstr ""
+
+#: admin/views/tags-list.php:27
+msgid "No tags yet. Create your first tag to get started."
+msgstr ""
+
+#: admin/views/tags-list.php:33
+msgid "Badge"
+msgstr ""
+
+#: admin/views/tags-list.php:35
+msgid "Slug"
+msgstr ""
+
+#: admin/views/tags-list.php:36
+msgid "Type"
+msgstr ""
+
+#: admin/views/tags-list.php:37
+msgid "Rules"
+msgstr ""
+
+#: admin/views/tags-list.php:38
+msgid "Created"
+msgstr ""
+
+#: admin/views/tags-list.php:50
+msgid "Order"
+msgstr ""
+
+#: admin/views/tags-list.php:51
+msgid "Customer"
+msgstr ""
+
+#: admin/views/tags-list.php:52
+msgid "Both"
+msgstr ""
+
+#: admin/views/tags-list.php:74
+msgid "Delete this tag? This cannot be undone."
+msgstr ""
+
+#: includes/Admin/CustomerTagsColumn.php:22
+#: includes/Admin/OrderTagsColumn.php:33
+#: includes/Admin/OrderTagsColumn.php:38
+msgid "Tags"
+msgstr ""
+
+#: includes/Admin/CustomerTagsColumn.php:40
+#: includes/Admin/OrderTagsColumn.php:76
+msgid "Click to edit tags"
+msgstr ""
+
+#: includes/Admin/GridFilters.php:201
+msgid "Re-run Tagger Rules"
+msgstr ""
+
+#. translators: %d: number of orders processed
+#: includes/Admin/GridFilters.php:246
+#, php-format
+msgid "Tagger rules re-run on %d order."
+msgid_plural "Tagger rules re-run on %d orders."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Admin/GridFilters.php:285
+msgid "Filter by tag&hellip;"
+msgstr ""
+
+#: includes/Admin/OrderTagsMetaBox.php:27
+msgid "Order Tags"
+msgstr ""
+
+#: includes/Admin/TagPopover.php:52
+msgid "Applied"
+msgstr ""
+
+#: includes/Admin/TagPopover.php:53
+msgid "Add tag"
+msgstr ""
+
+#: includes/Admin/TagPopover.php:54
+msgid "No tags defined yet."
+msgstr ""
+
+#: includes/Admin/TagPopover.php:55
+msgid "All tags applied."
+msgstr ""
+
+#: includes/Admin/TagPopover.php:56
+msgid "Saving…"
+msgstr ""
+
+#: includes/Admin/TagPopover.php:57
+msgid "Error saving tag. Please try again."
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:36
+msgid "Order & Customer Tags"
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:37
+msgid "Order & Cust. Tags"
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:112
+#: includes/Admin/TagsAdmin.php:198
+#: includes/Admin/TagsAdmin.php:213
+msgid "Tag not found."
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:137
+msgid "Tag name is required."
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:139
+msgid "Tag name must be 100 characters or fewer."
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:143
+msgid "Invalid tag type."
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:162
+msgid "Tag updated."
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:165
+msgid "Tag created."
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:186
+msgid "Tag deleted."
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:247
+msgid "Invalid tag."
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:251
+msgid "Rule label is required."
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:253
+msgid "Rule label must be 100 characters or fewer."
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:257
+msgid "Invalid operator."
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:284
+msgid "Rule updated."
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:287
+msgid "Rule created."
+msgstr ""
+
+#: includes/Admin/TagsAdmin.php:309
+msgid "Rule deleted."
+msgstr ""
+
+#: wc-order-customer-tagger.php:68
+msgid "CM Order & Customer Tagger could not be activated: "
+msgstr ""
+
+#: wc-order-customer-tagger.php:70
+msgid "Plugin Activation Error"
+msgstr ""
+
+#: wc-order-customer-tagger.php:80
+msgid "CM Order & Customer Tagger requires WooCommerce to be installed and active."
+msgstr ""

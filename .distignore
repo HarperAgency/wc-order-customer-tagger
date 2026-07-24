@@ -1,0 +1,11 @@
+.github
+.git
+tests
+vendor
+composer.json
+composer.lock
+phpunit.xml
+phpstan.neon
+CLAUDE.md
+TODO.md
+README.md

@@ -1,25 +1,35 @@
 <?php
 /**
  * Database schema — creates and upgrades the four tagger tables.
+ *
+ * @package ClarityMomentum\WCTagger\Db
  */
+
 declare(strict_types=1);
 
 namespace ClarityMomentum\WCTagger\Db;
 
-if (!defined('ABSPATH')) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-class Schema
-{
-    private const VERSION_OPTION = 'cm_tagger_db_version';
-    public  const DB_VERSION     = '1.0';
+/**
+ * Manages creation and upgrades for all plugin database tables.
+ */
+class Schema {
 
-    public static function install(): void
-    {
-        global $wpdb;
-        $c = $wpdb->get_charset_collate();
-        $p = $wpdb->prefix;
+	private const VERSION_OPTION = 'cm_tagger_db_version';
+	public const DB_VERSION      = '1.0';
 
-        $sql = "
+	/**
+	 * Create or update all plugin tables using dbDelta.
+	 */
+	public static function install(): void {
+		global $wpdb;
+		$c = $wpdb->get_charset_collate();
+		$p = $wpdb->prefix;
+
+		$sql = "
         CREATE TABLE {$p}cm_tagger_tags (
             id         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             name       VARCHAR(100)        NOT NULL,
@@ -69,28 +79,46 @@ class Schema
             KEY tag_id (tag_id)
         ) {$c};";
 
-        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-        dbDelta($sql);
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
+		dbDelta( $sql );
 
-        update_option(self::VERSION_OPTION, self::DB_VERSION);
-    }
+		update_option( self::VERSION_OPTION, self::DB_VERSION );
+	}
 
-    public static function maybeUpgrade(): void
-    {
-        if (get_option(self::VERSION_OPTION) !== self::DB_VERSION) {
-            self::install();
-        }
-    }
+	/**
+	 * Run install() only when the stored DB version is outdated.
+	 */
+	public static function maybe_upgrade(): void {
+		if ( get_option( self::VERSION_OPTION ) !== self::DB_VERSION ) {
+			self::install();
+		}
+	}
 
-    public static function uninstall(): void
-    {
-        global $wpdb;
-        $p = $wpdb->prefix;
-        foreach (['cm_tagger_customer_tags', 'cm_tagger_order_tags',
-                  'cm_tagger_rules', 'cm_tagger_tags'] as $table) {
-            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-            $wpdb->query("DROP TABLE IF EXISTS {$p}{$table}");
-        }
-        delete_option(self::VERSION_OPTION);
-    }
+	/**
+	 * Drop all plugin tables on uninstall.
+	 */
+	public static function uninstall(): void {
+		global $wpdb;
+		$p = $wpdb->prefix;
+		foreach ( array(
+			'cm_tagger_customer_tags',
+			'cm_tagger_order_tags',
+			'cm_tagger_rules',
+			'cm_tagger_tags',
+		) as $table ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( "DROP TABLE IF EXISTS {$p}{$table}" );
+		}
+		delete_option( self::VERSION_OPTION );
+	}
+
+	/**
+	 * BC shim — callers in the main plugin file used maybeUpgrade().
+	 *
+	 * @deprecated Use maybe_upgrade() instead.
+	 */
+	public static function maybeUpgrade(): void { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
+		self::maybe_upgrade();
+	}
 }

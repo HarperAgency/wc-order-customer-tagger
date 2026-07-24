@@ -12,6 +12,7 @@ declare(strict_types=1);
  * items by module/platform slug, and tracks per-user dismissed GUIDs in
  * user meta.
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound -- bundled library, class name intentionally uses CM_ prefix
 class CM_Feed_Consumer {
 
 	/**

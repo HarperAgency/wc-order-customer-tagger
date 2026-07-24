@@ -1,0 +1,15 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 5
+    paths:
+        - includes/
+        - wc-order-customer-tagger.php
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+        - vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
+    ignoreErrors:
+        - '#Constant CM_TAGGER_[A-Z_]+ not found#'
+        - '#Instantiated class CM_Feed_[A-Za-z_]+ not found#'
+        - '#Call to method [a-z_]+\(\) on an unknown class CM_Feed_[A-Za-z_]+#'

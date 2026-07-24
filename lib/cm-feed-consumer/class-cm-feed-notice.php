@@ -11,6 +11,7 @@ declare(strict_types=1);
  * Displays WP admin notices for unread CM feed items and persists dismiss
  * state via AJAX + user meta.
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound -- bundled library, class name intentionally uses CM_ prefix
 class CM_Feed_Notice {
 
 	/**

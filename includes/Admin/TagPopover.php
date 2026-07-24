@@ -4,169 +4,285 @@
  *
  * Registers AJAX endpoints and enqueues the popover JS/CSS on the relevant
  * admin screens. The JS handles all UI; PHP only persists the changes.
+ *
+ * @package ClarityMomentum\WCTagger\Admin
  */
+
 declare(strict_types=1);
 
 namespace ClarityMomentum\WCTagger\Admin;
 
-if (!defined('ABSPATH')) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-class TagPopover
-{
-    private const NONCE_ACTION = 'cm_tagger_popover';
+/**
+ * Provides AJAX endpoints and assets for the inline tag editing popover.
+ */
+class TagPopover {
 
-    public function register(): void
-    {
-        add_action('admin_enqueue_scripts', [$this, 'enqueueAssets']);
+	private const NONCE_ACTION = 'cm_tagger_popover';
 
-        // AJAX — logged-in admin users only (no nopriv)
-        add_action('wp_ajax_cm_tagger_get_all_tags',  [$this, 'ajaxGetAllTags']);
-        add_action('wp_ajax_cm_tagger_add_tag',       [$this, 'ajaxAddTag']);
-        add_action('wp_ajax_cm_tagger_remove_tag',    [$this, 'ajaxRemoveTag']);
-    }
+	/**
+	 * Register AJAX and asset hooks.
+	 */
+	public function register(): void {
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 
-    public function enqueueAssets(string $hook): void
-    {
-        $screens = ['edit.php', 'woocommerce_page_wc-orders', 'users.php'];
-        if (!in_array($hook, $screens, true)) return;
+		// AJAX — logged-in admin users only (no nopriv).
+		add_action( 'wp_ajax_cm_tagger_get_all_tags', array( $this, 'ajax_get_all_tags' ) );
+		add_action( 'wp_ajax_cm_tagger_add_tag', array( $this, 'ajax_add_tag' ) );
+		add_action( 'wp_ajax_cm_tagger_remove_tag', array( $this, 'ajax_remove_tag' ) );
+	}
 
-        wp_enqueue_style(
-            'cm-tagger-admin',
-            CM_TAGGER_URL . 'admin/css/tagger-admin.css',
-            [],
-            CM_TAGGER_VERSION
-        );
+	/**
+	 * Enqueue admin CSS and popover JS on grid screens.
+	 *
+	 * @param string $hook Current admin page hook.
+	 */
+	public function enqueue_assets( string $hook ): void {
+		$screens = array( 'edit.php', 'woocommerce_page_wc-orders', 'users.php' );
+		if ( ! in_array( $hook, $screens, true ) ) {
+			return;
+		}
 
-        wp_enqueue_script(
-            'cm-tag-popover',
-            CM_TAGGER_URL . 'admin/js/tag-popover.js',
-            ['jquery'],
-            CM_TAGGER_VERSION,
-            true
-        );
+		wp_enqueue_style(
+			'cm-tagger-admin',
+			CM_TAGGER_URL . 'admin/css/tagger-admin.css',
+			array(),
+			CM_TAGGER_VERSION
+		);
 
-        wp_localize_script('cm-tag-popover', 'cmTaggerPopover', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce'   => wp_create_nonce(self::NONCE_ACTION),
-            'i18n'    => [
-                'applied'     => __('Applied', 'wc-order-customer-tagger'),
-                'add'         => __('Add tag', 'wc-order-customer-tagger'),
-                'noTags'      => __('No tags defined yet.', 'wc-order-customer-tagger'),
-                'allApplied'  => __('All tags applied.', 'wc-order-customer-tagger'),
-                'saving'      => __('Saving…', 'wc-order-customer-tagger'),
-                'error'       => __('Error saving tag. Please try again.', 'wc-order-customer-tagger'),
-            ],
-        ]);
-    }
+		wp_enqueue_script(
+			'cm-tag-popover',
+			CM_TAGGER_URL . 'admin/js/tag-popover.js',
+			array( 'jquery' ),
+			CM_TAGGER_VERSION,
+			true
+		);
 
-    // ── AJAX: get all defined tags ─────────────────────────────────────────────
+		wp_localize_script(
+			'cm-tag-popover',
+			'cmTaggerPopover',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( self::NONCE_ACTION ),
+				'i18n'    => array(
+					'applied'    => __( 'Applied', 'cm-order-customer-tagger' ),
+					'add'        => __( 'Add tag', 'cm-order-customer-tagger' ),
+					'noTags'     => __( 'No tags defined yet.', 'cm-order-customer-tagger' ),
+					'allApplied' => __( 'All tags applied.', 'cm-order-customer-tagger' ),
+					'saving'     => __( 'Saving…', 'cm-order-customer-tagger' ),
+					'error'      => __( 'Error saving tag. Please try again.', 'cm-order-customer-tagger' ),
+				),
+			)
+		);
+	}
 
-    public function ajaxGetAllTags(): void
-    {
-        $this->verifyRequest();
+	// ── AJAX: get all defined tags ─────────────────────────────────────────────
 
-        global $wpdb;
-        $tagsTable = $wpdb->prefix . 'cm_tagger_tags';
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-        $tags = $wpdb->get_results( "SELECT id, name, color, image_url FROM `{$tagsTable}` ORDER BY name ASC", ARRAY_A ) ?: [];
+	/**
+	 * Return all defined tags as JSON for the popover.
+	 */
+	public function ajax_get_all_tags(): void {
+		$this->verify_request();
 
-        wp_send_json_success(['tags' => $tags]);
-    }
+		global $wpdb;
+		$tags_table = $wpdb->prefix . 'cm_tagger_tags';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$tags = $wpdb->get_results(
+			$wpdb->prepare( 'SELECT id, name, color, image_url FROM %i ORDER BY name ASC', $tags_table ),
+			ARRAY_A
+		);
+		$tags = $tags ? $tags : array();
 
-    // ── AJAX: add a tag to an order or customer ────────────────────────────────
+		wp_send_json_success( array( 'tags' => $tags ) );
+	}
 
-    public function ajaxAddTag(): void
-    {
-        $this->verifyRequest();
+	// ── AJAX: add a tag to an order or customer ────────────────────────────────
 
-        $type     = sanitize_key($_POST['type']     ?? '');
-        $objectId = (int) ($_POST['object_id']      ?? 0);
-        $tagId    = (int) ($_POST['tag_id']          ?? 0);
+	/**
+	 * Add a tag assignment via AJAX.
+	 */
+	public function ajax_add_tag(): void {
+		$this->verify_request();
 
-        if (!in_array($type, ['order', 'customer'], true) || !$objectId || !$tagId) {
-            wp_send_json_error(['message' => 'Invalid parameters.']);
-        }
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in verify_request() above
+		$type = sanitize_key( wp_unslash( $_POST['type'] ?? '' ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$object_id = (int) ( $_POST['object_id'] ?? 0 );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$tag_id = (int) ( $_POST['tag_id'] ?? 0 );
 
-        global $wpdb;
-        $table = $type === 'order'
-            ? $wpdb->prefix . 'cm_tagger_order_tags'
-            : $wpdb->prefix . 'cm_tagger_customer_tags';
+		if ( ! in_array( $type, array( 'order', 'customer' ), true ) || ! $object_id || ! $tag_id ) {
+			wp_send_json_error( array( 'message' => 'Invalid parameters.' ) );
+		}
 
-        $col = $type === 'order' ? 'order_id' : 'customer_id';
+		global $wpdb;
+		$table = 'order' === $type
+			? $wpdb->prefix . 'cm_tagger_order_tags'
+			: $wpdb->prefix . 'cm_tagger_customer_tags';
 
-        // INSERT IGNORE prevents duplicate-key errors
-        $wpdb->query($wpdb->prepare(
-            "INSERT IGNORE INTO {$table} ({$col}, tag_id) VALUES (%d, %d)",
-            $objectId,
-            $tagId
-        ));
+		$col = 'order' === $type ? 'order_id' : 'customer_id';
 
-        wp_send_json_success([
-            'tags' => $this->getAppliedTags($type, $objectId),
-        ]);
-    }
+		// INSERT IGNORE prevents duplicate-key errors.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query(
+			$wpdb->prepare(
+				"INSERT IGNORE INTO %i ({$col}, tag_id) VALUES (%d, %d)", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $col is hardcoded string, not user input
+				$table,
+				$object_id,
+				$tag_id
+			)
+		);
 
-    // ── AJAX: remove a tag from an order or customer ───────────────────────────
+		wp_send_json_success(
+			array(
+				'tags' => $this->get_applied_tags( $type, $object_id ),
+			)
+		);
+	}
 
-    public function ajaxRemoveTag(): void
-    {
-        $this->verifyRequest();
+	// ── AJAX: remove a tag from an order or customer ───────────────────────────
 
-        $type     = sanitize_key($_POST['type']    ?? '');
-        $objectId = (int) ($_POST['object_id']     ?? 0);
-        $tagId    = (int) ($_POST['tag_id']         ?? 0);
+	/**
+	 * Remove a tag assignment via AJAX.
+	 */
+	public function ajax_remove_tag(): void {
+		$this->verify_request();
 
-        if (!in_array($type, ['order', 'customer'], true) || !$objectId || !$tagId) {
-            wp_send_json_error(['message' => 'Invalid parameters.']);
-        }
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in verify_request() above
+		$type = sanitize_key( wp_unslash( $_POST['type'] ?? '' ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$object_id = (int) ( $_POST['object_id'] ?? 0 );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$tag_id = (int) ( $_POST['tag_id'] ?? 0 );
 
-        global $wpdb;
-        $table = $type === 'order'
-            ? $wpdb->prefix . 'cm_tagger_order_tags'
-            : $wpdb->prefix . 'cm_tagger_customer_tags';
+		if ( ! in_array( $type, array( 'order', 'customer' ), true ) || ! $object_id || ! $tag_id ) {
+			wp_send_json_error( array( 'message' => 'Invalid parameters.' ) );
+		}
 
-        $col = $type === 'order' ? 'order_id' : 'customer_id';
+		global $wpdb;
+		$table = 'order' === $type
+			? $wpdb->prefix . 'cm_tagger_order_tags'
+			: $wpdb->prefix . 'cm_tagger_customer_tags';
 
-        $wpdb->delete($table, [$col => $objectId, 'tag_id' => $tagId]);
+		$col = 'order' === $type ? 'order_id' : 'customer_id';
 
-        wp_send_json_success([
-            'tags' => $this->getAppliedTags($type, $objectId),
-        ]);
-    }
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->delete(
+			$table,
+			array(
+				$col     => $object_id,
+				'tag_id' => $tag_id,
+			)
+		);
 
-    // ── Helpers ────────────────────────────────────────────────────────────────
+		wp_send_json_success(
+			array(
+				'tags' => $this->get_applied_tags( $type, $object_id ),
+			)
+		);
+	}
 
-    private function verifyRequest(): void
-    {
-        check_ajax_referer(self::NONCE_ACTION, 'nonce');
+	// ── Helpers ────────────────────────────────────────────────────────────────
 
-        if (!current_user_can('manage_woocommerce')) {
-            wp_send_json_error(['message' => 'Insufficient permissions.'], 403);
-        }
-    }
+	/**
+	 * Verify the AJAX nonce and check user capability.
+	 */
+	private function verify_request(): void {
+		check_ajax_referer( self::NONCE_ACTION, 'nonce' );
 
-    private function getAppliedTags(string $type, int $objectId): array
-    {
-        global $wpdb;
+		if ( ! current_user_can( 'manage_woocommerce' ) ) { // phpcs:ignore WordPress.WP.Capabilities.Unknown
+			wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
+		}
+	}
 
-        $joinTable = $type === 'order'
-            ? $wpdb->prefix . 'cm_tagger_order_tags'
-            : $wpdb->prefix . 'cm_tagger_customer_tags';
+	/**
+	 * Fetch the currently applied tags for an order or customer.
+	 *
+	 * @param string $type      'order' or 'customer'.
+	 * @param int    $object_id Order or customer ID.
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function get_applied_tags( string $type, int $object_id ): array {
+		global $wpdb;
 
-        $joinCol   = $type === 'order' ? 'order_id' : 'customer_id';
-        $tagsTable = $wpdb->prefix . 'cm_tagger_tags';
+		$join_table = 'order' === $type
+			? $wpdb->prefix . 'cm_tagger_order_tags'
+			: $wpdb->prefix . 'cm_tagger_customer_tags';
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-        return $wpdb->get_results(
-            $wpdb->prepare(
-                "SELECT t.id, t.name, t.color, t.image_url
-                   FROM {$joinTable} jt
-                   JOIN {$tagsTable} t ON t.id = jt.tag_id
-                  WHERE jt.{$joinCol} = %d
+		$join_col   = 'order' === $type ? 'order_id' : 'customer_id';
+		$tags_table = $wpdb->prefix . 'cm_tagger_tags';
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// $join_col is a hardcoded column name string ('order_id' or 'customer_id'), not user input.
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT t.id, t.name, t.color, t.image_url
+                   FROM %i jt
+                   JOIN %i t ON t.id = jt.tag_id
+                  WHERE jt.{$join_col} = %d
                   ORDER BY t.name ASC",
-                $objectId
-            ),
-            ARRAY_A
-        ) ?: [];
-    }
+				$join_table,
+				$tags_table,
+				$object_id
+			),
+			ARRAY_A
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		return $results ? $results : array();
+	}
+
+	// ── BC shims ──────────────────────────────────────────────────────────────
+
+	/**
+	 * BC shim for test reflection compatibility — routes to get_applied_tags().
+	 *
+	 * @param string $type      'order' or 'customer'.
+	 * @param int    $object_id Order or customer ID.
+	 * @return array<int, array<string, mixed>>
+	 * @deprecated Use get_applied_tags() instead.
+	 */
+	protected function getAppliedTags( string $type, int $object_id ): array { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
+		return $this->get_applied_tags( $type, $object_id );
+	}
+
+	/**
+	 * BC shim for the enqueue_assets hook callback.
+	 *
+	 * @param string $hook Current admin page hook.
+	 * @deprecated Use enqueue_assets() instead.
+	 */
+	public function enqueueAssets( string $hook ): void { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
+		$this->enqueue_assets( $hook );
+	}
+
+	/**
+	 * BC shim for the AJAX get all tags callback.
+	 *
+	 * @deprecated Use ajax_get_all_tags() instead.
+	 */
+	public function ajaxGetAllTags(): void { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
+		$this->ajax_get_all_tags();
+	}
+
+	/**
+	 * BC shim for the AJAX add tag callback.
+	 *
+	 * @deprecated Use ajax_add_tag() instead.
+	 */
+	public function ajaxAddTag(): void { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
+		$this->ajax_add_tag();
+	}
+
+	/**
+	 * BC shim for the AJAX remove tag callback.
+	 *
+	 * @deprecated Use ajax_remove_tag() instead.
+	 */
+	public function ajaxRemoveTag(): void { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
+		$this->ajax_remove_tag();
+	}
 }

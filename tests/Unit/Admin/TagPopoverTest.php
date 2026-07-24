@@ -118,7 +118,13 @@ class TagPopoverTest extends TestCase
         return new class ($rows) {
             public string $prefix = 'wp_';
             public function __construct(private array $rows) {}
-            public function prepare(string $sql, mixed ...$args): string { return $sql; }
+            public function prepare(string $sql, mixed ...$args): string {
+                foreach ($args as $arg) {
+                    $sql = preg_replace('/%i/', '`' . $arg . '`', $sql, 1) ?? $sql;
+                    $sql = preg_replace('/%[sd]/', (string) $arg, $sql, 1) ?? $sql;
+                }
+                return $sql;
+            }
             public function get_results(string $sql, string $output = 'OBJECT'): array {
                 return $this->rows;
             }
@@ -132,7 +138,13 @@ class TagPopoverTest extends TestCase
         return new class ($queries, $rows) {
             public string $prefix = 'wp_';
             public function __construct(private array &$queries, private array $rows) {}
-            public function prepare(string $sql, mixed ...$args): string { return $sql; }
+            public function prepare(string $sql, mixed ...$args): string {
+                foreach ($args as $arg) {
+                    $sql = preg_replace('/%i/', '`' . $arg . '`', $sql, 1) ?? $sql;
+                    $sql = preg_replace('/%[sd]/', (string) $arg, $sql, 1) ?? $sql;
+                }
+                return $sql;
+            }
             public function get_results(string $sql, string $output = 'OBJECT'): array {
                 $this->queries[] = $sql;
                 return $this->rows;
@@ -144,7 +156,13 @@ class TagPopoverTest extends TestCase
     {
         return new class {
             public string $prefix = 'wp_';
-            public function prepare(string $sql, mixed ...$args): string { return $sql; }
+            public function prepare(string $sql, mixed ...$args): string {
+                foreach ($args as $arg) {
+                    $sql = preg_replace('/%i/', '`' . $arg . '`', $sql, 1) ?? $sql;
+                    $sql = preg_replace('/%[sd]/', (string) $arg, $sql, 1) ?? $sql;
+                }
+                return $sql;
+            }
             public function get_results(string $sql, string $output = 'OBJECT'): ?array {
                 return null; // Simulates wpdb returning null on error
             }

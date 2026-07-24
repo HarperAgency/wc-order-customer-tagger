@@ -181,6 +181,11 @@ if (!function_exists('get_userdata')) {
 if (!function_exists('absint')) {
     function absint(mixed $maybeint): int { return abs((int) $maybeint); }
 }
+if (!function_exists('wp_json_encode')) {
+    function wp_json_encode(mixed $data, int $options = 0, int $depth = 512): string|false {
+        return json_encode($data, $options, $depth);
+    }
+}
 if (!function_exists('selected')) {
     function selected(mixed $selected, mixed $current = true, bool $echo = true): string {
         $result = $selected == $current ? ' selected="selected"' : '';
