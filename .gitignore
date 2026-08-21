@@ -4,3 +4,4 @@ tests/.phpunit.result.cache
 
 # Build output
 dist/
+.phpunit.result.cache
