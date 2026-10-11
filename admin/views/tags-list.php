@@ -109,4 +109,6 @@ $add_url = add_query_arg(
 		</tbody>
 	</table>
 	<?php endif; ?>
+
+	<?php require CM_TAGGER_DIR . 'admin/views/partials/footer.php'; ?>
 </div>

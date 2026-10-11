@@ -129,4 +129,6 @@ $cm_op_labels = array(
 		</tbody>
 	</table>
 	<?php endif; ?>
+
+	<?php require CM_TAGGER_DIR . 'admin/views/partials/footer.php'; ?>
 </div>

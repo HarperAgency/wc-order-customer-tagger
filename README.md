@@ -129,6 +129,14 @@ Tests use PHP stubs only - no WordPress or WooCommerce installation needed.
 
 ---
 
+## More WooCommerce Tools from Clarity Momentum
+
+- **[SignalStream - Server-Side Tracking](https://claritymomentum.io/signalstream/)** - reliable conversion tracking for WooCommerce that works independently of ad blockers. Connect the customer segments you tag here to your paid campaigns.
+- **[Moneris Checkout for WooCommerce](https://claritymomentum.io/moneris/woocommerce/)** - PCI-compliant Moneris payment gateway with HPOS and Subscriptions support.
+- **[Amazon Shipping for WooCommerce](https://claritymomentum.io/products/amazon-shipping/)** - connect your store to Amazon's carrier network.
+
+---
+
 ## Support & Custom Development
 
 This plugin is free and open source (GPL-2.0).
@@ -136,6 +144,7 @@ This plugin is free and open source (GPL-2.0).
 For custom rule conditions, WooCommerce integrations, or eCommerce development:
 
 **[Clarity Momentum](https://claritymomentum.io)** - commerce integrations and automation for growing businesses.
+[Contact us](https://claritymomentum.io/contact-us/) for priority support and custom development.
 
 ---
 

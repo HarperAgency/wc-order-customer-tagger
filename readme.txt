@@ -46,6 +46,18 @@ Build rules using any combination of:
 * Days since last order
 * Customer account age
 
+= Built by Clarity Momentum =
+
+CM Order & Customer Tagger is built and maintained by [Clarity Momentum](https://claritymomentum.io), a commerce integrations and automation consultancy for growing businesses.
+
+If you are working on WooCommerce store operations, you may also find these useful:
+
+* **[SignalStream - Server-Side Tracking for WooCommerce](https://claritymomentum.io/signalstream/)** - reliable conversion tracking that works independently of ad blockers and browser privacy restrictions. Understand exactly which customer segments (including the ones you tag here) are converting from paid campaigns.
+* **[Moneris Checkout for WooCommerce](https://claritymomentum.io/moneris/woocommerce/)** - a modern, PCI-compliant Moneris payment gateway with HPOS support and WooCommerce Subscriptions compatibility.
+* **[Amazon Shipping for WooCommerce](https://claritymomentum.io/products/amazon-shipping/)** - connect your WooCommerce store to Amazon's carrier network directly.
+
+For custom WooCommerce development, integrations, or enterprise automation - [contact the team at Clarity Momentum](https://claritymomentum.io/contact-us/).
+
 = Feed notifications =
 
 CM Order & Customer Tagger includes the Clarity Momentum module feed. When updates, new features, or important notices are available, a brief admin notice will appear - capped at two at a time and fully dismissible.
@@ -78,6 +90,10 @@ Not automatically. Use the bulk action "Re-run tagging rules" on the Orders scre
 = Does it tag customers automatically? =
 
 Yes, for logged-in customers. When a logged-in customer places an order or their order status changes, customer rules are also evaluated. Guest orders are tagged at the order level only.
+
+= Where can I get support? =
+
+Open an issue on the [GitHub repository](https://github.com/claritymomentum/wc-order-customer-tagger) or [contact Clarity Momentum](https://claritymomentum.io/contact-us/) for priority support and custom development.
 
 == Screenshots ==
 

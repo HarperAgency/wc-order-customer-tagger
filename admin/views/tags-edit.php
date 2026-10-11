@@ -238,4 +238,6 @@ $cm_tag_id = $cm_is_new ? 0 : (int) $tag['id'];
 		</a>
 	</p>
 	<?php endif; ?>
+
+	<?php require CM_TAGGER_DIR . 'admin/views/partials/footer.php'; ?>
 </div>

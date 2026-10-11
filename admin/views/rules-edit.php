@@ -315,6 +315,8 @@ $cm_operators_by_type = array(
 
 		<?php submit_button( $cm_is_new ? __( 'Create Rule', 'cm-order-customer-tagger' ) : __( 'Update Rule', 'cm-order-customer-tagger' ) ); ?>
 	</form>
+
+	<?php require CM_TAGGER_DIR . 'admin/views/partials/footer.php'; ?>
 </div>
 
 <script type="application/json" id="cm-field-type-map"><?php echo $cm_field_type_map_json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_json_encode output is safe ?></script>
