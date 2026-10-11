@@ -1,35 +1,66 @@
-# WooCommerce Order & Customer Tagger
+# CM Order & Customer Tagger for WooCommerce
 
-Automatically tag WooCommerce orders and customers based on configurable rule conditions — no code required.
+Automatically tag WooCommerce orders and customers using configurable rule conditions - no code required.
 
-![Version](https://img.shields.io/badge/version-1.2.0-blue)
+![Version](https://img.shields.io/badge/version-1.3.0-blue)
 ![PHP](https://img.shields.io/badge/PHP-8.1%2B-purple)
 ![WooCommerce](https://img.shields.io/badge/WooCommerce-7.0%2B-96588a)
-![License](https://img.shields.io/badge/license-MIT-green)
+![License](https://img.shields.io/badge/license-GPL--2.0-green)
+![HPOS](https://img.shields.io/badge/HPOS-compatible-brightgreen)
+
+**[Documentation](docs/)** · **[Changelog](CHANGELOG.md)** · **[claritymomentum.io](https://claritymomentum.io)**
 
 ---
 
 ## What It Does
 
-Define rules in the WordPress admin. When an order is placed or updated, the plugin evaluates those rules and applies tags to the order and/or customer automatically.
+Define rules in the WordPress admin. When an order is placed or updated, the plugin evaluates those rules and applies colour-coded tags to the order and/or customer automatically.
 
 **Example rules:**
 - Tag orders over $500 as `high-value`
-- Tag customers from California as `west-coast`
-- Tag orders containing a specific product category as `subscription`
 - Tag first-time buyers as `new-customer`
+- Tag orders paid by credit card as `card-payment`
+- Tag customers from Canada as `ca-customer`
+- Tag orders where billing and shipping addresses differ as `possible-gift`
 
-Tags appear on the order detail screen and the customer profile, making it easy to filter, segment, and act on your data.
+Tags appear in your order list, on the order detail page, and on customer profiles - making it easy to filter, segment, and act on your data at a glance.
 
 ---
 
 ## Features
 
-- Rule builder UI in WP Admin — no coding needed
-- Supports order total, product, category, customer location, and order count conditions
-- Tags applied automatically on order create and status change
-- Tags visible on order and customer screens in WP Admin
-- Powered by the [Harper Rule Engine](https://github.com/harper-agency/harper-rule-engine)
+- **Rule-based automatic tagging** - set conditions once, tags apply to every matching order forever
+- **14 starter tags and rules** installed on activation (High Value, First Order, Repeat Buyer, Guest Checkout, and more)
+- **Colour-coded tags** with custom hex colours for instant visual scanning
+- **Inline tag editor** - add or remove tags directly from the order or customer list without opening each record
+- **Filter by tag** on the orders and customers list screens
+- **Bulk re-run** - retroactively apply rules to existing orders in one action
+- **HPOS compatible** - fully tested with WooCommerce High-Performance Order Storage
+- **Separate order and customer tag types** - tag the transaction and the person independently
+
+---
+
+## Rule Conditions
+
+Build rules using any combination of:
+
+| Condition | Options |
+|-----------|---------|
+| Order total | greater than, less than, equals |
+| Item count | greater than, less than, equals |
+| Shipping method | contains, equals |
+| Payment method | contains, equals |
+| Order status | any WooCommerce status |
+| Shipping country | is, is not |
+| Billing country | is, is not |
+| Customer type | guest, registered |
+| First order | yes / no |
+| Coupon used | yes / no |
+| Address mismatch | billing differs from shipping |
+| Customer lifetime value | greater than, less than |
+| Customer order count | greater than, less than, equals |
+| Days since last order | greater than, less than |
+| Customer account age | greater than, less than (days) |
 
 ---
 
@@ -43,37 +74,45 @@ Tags appear on the order detail screen and the customer profile, making it easy 
 
 ## Installation
 
-### From ZIP (recommended)
+### From ZIP (recommended for most users)
 
 1. Download the latest release ZIP from the [Releases](../../releases) page
 2. In WordPress admin: **Plugins → Add New → Upload Plugin**
 3. Upload the ZIP and activate
+4. Go to **WooCommerce → Order & Customer Tagger** to manage tags and rules
 
 ### From Source
 
 ```bash
-git clone https://github.com/harper-agency/wc-order-customer-tagger.git
+git clone https://github.com/claritymomentum/wc-order-customer-tagger.git
 cd wc-order-customer-tagger
 composer install --no-dev
 ```
 
-Then upload the folder to `wp-content/plugins/` and activate in WordPress admin.
+Upload the folder to `wp-content/plugins/` and activate in WordPress admin.
 
 ---
 
-## Usage
+## Quick Start
 
-1. Go to **WooCommerce → Order Tagger → Rules**
-2. Click **Add Rule**
-3. Set your conditions (order total, product, location, etc.)
-4. Set the tag(s) to apply
-5. Save — rules are evaluated on every new order and status change
+See [docs/getting-started.md](docs/getting-started.md) for a full walkthrough.
+
+1. After activation, 14 starter tags and rules are created automatically
+2. Place a test order to see tags applied in real time
+3. Go to **WooCommerce → Order & Customer Tagger** to edit or add rules
+4. Use the tag filter dropdown on the Orders screen to segment your orders
 
 ---
 
 ## Screenshots
 
-*Coming soon*
+1. Order list with colour-coded tag badges
+2. Inline tag editor popover
+3. Tag management screen
+4. Rule builder with conditions
+5. Customer profile with applied tags
+
+*(Screenshots coming soon)*
 
 ---
 
@@ -81,21 +120,25 @@ Then upload the folder to `wp-content/plugins/` and activate in WordPress admin.
 
 ```bash
 composer install
-composer test
+composer test        # PHPUnit 10 - no WP/WC install required
+composer phpcs       # PHPCS code style check
+composer phpstan     # Static analysis
 ```
 
-Tests require PHP 8.1+ and are run via PHPUnit 10. No WordPress or WooCommerce installation needed — the test suite uses stubs.
+Tests use PHP stubs only - no WordPress or WooCommerce installation needed.
 
 ---
 
 ## Support & Custom Development
 
-This plugin is free and open source. For custom rule conditions, integrations, or WooCommerce development:
+This plugin is free and open source (GPL-2.0).
 
-**[Harper Agency](https://harperservice.tech)** — WooCommerce & eCommerce development
+For custom rule conditions, WooCommerce integrations, or eCommerce development:
+
+**[Clarity Momentum](https://claritymomentum.io)** - commerce integrations and automation for growing businesses.
 
 ---
 
 ## License
 
-MIT — see [LICENSE](LICENSE)
+GPL-2.0-or-later - see [LICENSE](LICENSE)
